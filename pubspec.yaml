@@ -1,0 +1,22 @@
+name: bysykkelen_stavanger
+description: Use the city bikes in Stavanger without the tears
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^0.1.2
+
+  google_maps_flutter: ^0.5.13
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
