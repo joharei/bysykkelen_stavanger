@@ -4,7 +4,7 @@ description: Use the city bikes in Stavanger without the tears
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.3.0-dev <3.0.0"
 
 dependencies:
   flutter:
@@ -12,6 +12,9 @@ dependencies:
 
   cupertino_icons: ^0.1.2
 
+  http: ^0.12.0+2
+  flutter_bloc: ^0.15.0
+  equatable: ^0.2.5
   google_maps_flutter: ^0.5.13
 
 dev_dependencies:

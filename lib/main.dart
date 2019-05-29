@@ -1,47 +1,43 @@
+import 'package:bloc/bloc.dart';
+import 'package:bysykkelen_stavanger/features/map_page/map_page.dart';
+import 'package:bysykkelen_stavanger/repositories/bike_repository.dart';
+import 'package:bysykkelen_stavanger/repositories/citibikes_api_client.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart' as http;
 
-void main() => runApp(MyApp());
+class SimpleBlocDelegate extends BlocDelegate {
+  @override
+  onTransition(Bloc bloc, Transition transition) {
+    super.onTransition(bloc, transition);
+    print(transition);
+  }
+}
 
-class MyApp extends StatelessWidget {
+void main() {
+  BlocSupervisor.delegate = SimpleBlocDelegate();
+
+  final BikeRepository bikeRepository = BikeRepository(
+    citibikesApiClient: CitibikesApiClient(
+      httpClient: http.Client(),
+    ),
+  );
+
+  runApp(App(bikeRepository: bikeRepository));
+}
+
+class App extends StatelessWidget {
+  final BikeRepository bikeRepository;
+
+  App({Key key, @required this.bikeRepository})
+      : assert(bikeRepository != null),
+        super(key: key);
+
   @override
   Widget build(BuildContext context) => MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: MyHomePage(title: 'Flutter Demo Home Page'),
-      );
-}
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  static final _stavanger = CameraPosition(
-    target: LatLng(58.9109397, 5.7244898),
-    zoom: 11.5,
-  );
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: GoogleMap(
-          mapType: MapType.normal,
-          initialCameraPosition: _stavanger,
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => {},
-          tooltip: 'Increment',
-          child: Icon(Icons.add),
-        ),
+        home: MapPage(bikeRepository: bikeRepository),
       );
 }
