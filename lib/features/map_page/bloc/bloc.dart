@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
@@ -11,6 +12,7 @@ import 'package:meta/meta.dart';
 
 class BikeStationsBloc extends Bloc<BikesEvent, BikesState> {
   final BikeRepository bikeRepository;
+  Timer _pollingTimer;
 
   BikeStationsBloc({@required this.bikeRepository})
       : assert(bikeRepository != null);
@@ -23,16 +25,37 @@ class BikeStationsBloc extends Bloc<BikesEvent, BikesState> {
       );
 
   @override
+  void dispose() {
+    super.dispose();
+    if (_pollingTimer != null) {
+      _pollingTimer.cancel();
+    }
+  }
+
+  @override
   Stream<BikesState> mapEventToState(BikesEvent event) async* {
     if (event is StartPollingStations) {
-      yield* _mapStartPollingToState();
+      _mapStartPollingToState();
+    } else if (event is FetchBikeStations) {
+      yield* _mapFetchBikeStationsToState();
     } else if (event is MarkerSelected && currentState is BikesLoaded) {
       yield* _mapMarkerSelectedToState(event);
     }
   }
 
-  Stream<BikesState> _mapStartPollingToState() async* {
-    yield BikesLoading();
+  _mapStartPollingToState() {
+    dispatch(FetchBikeStations());
+    if (_pollingTimer != null) {
+      _pollingTimer.cancel();
+    }
+    _pollingTimer = Timer.periodic(
+        Duration(seconds: 30), (_) => dispatch(FetchBikeStations()));
+  }
+
+  Stream<BikesState> _mapFetchBikeStationsToState() async* {
+    if (!(currentState is BikesLoaded)) {
+      yield BikesLoading();
+    }
 
     try {
       final stations = await bikeRepository.getBikeStations();

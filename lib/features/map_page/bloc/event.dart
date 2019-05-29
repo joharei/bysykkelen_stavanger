@@ -7,6 +7,10 @@ abstract class BikesEvent extends Equatable {
 
 class StartPollingStations extends BikesEvent {}
 
+class StopPollingStations extends BikesEvent {}
+
+class FetchBikeStations extends BikesEvent {}
+
 class MarkerSelected extends BikesEvent {
   final String stationId;
 

@@ -23,14 +23,25 @@ class MapPage extends StatefulWidget {
   _MapPageState createState() => _MapPageState();
 }
 
-class _MapPageState extends State<MapPage> {
+class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   BikeStationsBloc _bikeStationsBloc;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _bikeStationsBloc = BikeStationsBloc(bikeRepository: widget.bikeRepository);
     _bikeStationsBloc.dispatch(StartPollingStations());
+  }
+
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _bikeStationsBloc.dispatch(StopPollingStations());
+    } else if (state == AppLifecycleState.resumed) {
+      _bikeStationsBloc.dispatch(StartPollingStations());
+    }
   }
 
   Set<Marker> _generateMarkers(BikesState state) {
@@ -55,6 +66,7 @@ class _MapPageState extends State<MapPage> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _bikeStationsBloc.dispose();
     super.dispose();
   }
