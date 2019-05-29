@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.V23.Bysykkelen" parent="Base.Theme.Bysykkelen">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="LaunchTheme" parent="Theme.V23.Bysykkelen" />
+
+</resources>

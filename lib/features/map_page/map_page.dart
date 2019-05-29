@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:bysykkelen_stavanger/features/map_page/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/map_page/bloc/event.dart';
 import 'package:bysykkelen_stavanger/features/map_page/bloc/state.dart';
@@ -27,7 +25,6 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   BikeStationsBloc _bikeStationsBloc;
-  Completer<GoogleMapController> _controller = Completer();
 
   @override
   void initState() {
@@ -52,9 +49,6 @@ class _MapPageState extends State<MapPage> {
             mapType: MapType.normal,
             initialCameraPosition: MapPage._stavanger,
             markers: _generateMarkers(state),
-            onMapCreated: (GoogleMapController controller) {
-              _controller.complete(controller);
-            },
           ),
     );
   }
