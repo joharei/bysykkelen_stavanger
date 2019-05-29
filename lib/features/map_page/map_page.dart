@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bysykkelen_stavanger/features/map_page/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/map_page/bloc/event.dart';
 import 'package:bysykkelen_stavanger/features/map_page/bloc/state.dart';
@@ -25,28 +27,19 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   BikeStationsBloc _bikeStationsBloc;
+  Completer<GoogleMapController> _controller = Completer();
 
   @override
   void initState() {
     super.initState();
     _bikeStationsBloc = BikeStationsBloc(bikeRepository: widget.bikeRepository);
-    _bikeStationsBloc.dispatch(BikesEvent.start);
+    _bikeStationsBloc.dispatch(StartPollingStations());
   }
 
-  Set<Marker> generateMarkers(BikesState state) {
+  Set<Marker> _generateMarkers(BikesState state) {
     Set<Marker> markers = {};
     if (state is BikesLoaded) {
-      state.stations.forEach((station, icon) {
-        markers.add(
-          Marker(
-            markerId: MarkerId(station.id),
-            position: LatLng(station.lat, station.lon),
-            icon: BitmapDescriptor.fromBytes(icon),
-            onTap: () => {},
-            consumeTapEvents: true,
-          ),
-        );
-      });
+      markers = Set.of(state.markers.values);
     }
     return markers;
   }
@@ -58,8 +51,17 @@ class _MapPageState extends State<MapPage> {
       builder: (_, BikesState state) => GoogleMap(
             mapType: MapType.normal,
             initialCameraPosition: MapPage._stavanger,
-            markers: generateMarkers(state),
+            markers: _generateMarkers(state),
+            onMapCreated: (GoogleMapController controller) {
+              _controller.complete(controller);
+            },
           ),
     );
+  }
+
+  @override
+  void dispose() {
+    _bikeStationsBloc.dispose();
+    super.dispose();
   }
 }

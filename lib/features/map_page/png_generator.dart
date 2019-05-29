@@ -4,7 +4,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-Future<Uint8List> generatePngForNumber(int number) async {
+Future<Uint8List> generatePngForNumber(int number,
+    {bool active = false}) async {
   var diameter = 25 * window.devicePixelRatio;
   var strokeWidth = 1 * window.devicePixelRatio;
   var textYOffset = 4.5 * window.devicePixelRatio;
@@ -13,10 +14,14 @@ Future<Uint8List> generatePngForNumber(int number) async {
   var c = Canvas(recorder);
 
   var circlePaint = Paint();
-  circlePaint.color = number == 0 ? Colors.grey : Colors.blue;
+  circlePaint.color = number == 0
+      ? (active ? Colors.grey[700] : Colors.grey)
+      : (active ? Colors.blue[900] : Colors.blue);
   c.drawCircle(Offset(diameter / 2, diameter / 2), diameter / 2, circlePaint);
   var strokePaint = Paint();
-  strokePaint.color = number == 0 ? Colors.grey[900] : Colors.blue[900];
+  strokePaint.color = number == 0
+      ? (active ? Colors.black : Colors.grey[900])
+      : (active ? Colors.deepPurple[900] : Colors.blue[900]);
   strokePaint.style = PaintingStyle.stroke;
   strokePaint.strokeWidth = strokeWidth;
   c.drawCircle(
