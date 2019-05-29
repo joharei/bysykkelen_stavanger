@@ -1,16 +1,20 @@
-class Station {
+import 'package:equatable/equatable.dart';
+
+class Station extends Equatable {
   final String id;
   final String name;
   final double lat;
   final double lon;
   final int freeBikes;
 
-  Station(this.id, this.name, this.lat, this.lon, this.freeBikes);
+  Station(this.id, this.name, this.lat, this.lon, this.freeBikes)
+      : super([id, name, lat, lon, freeBikes]);
 
-  Station.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        name = json['name'],
-        lat = json['latitude'],
-        lon = json['longitude'],
-        freeBikes = json['free_bikes'];
+  factory Station.fromJson(Map<String, dynamic> json) => Station(
+        json['id'],
+        json['name'],
+        json['latitude'],
+        json['longitude'],
+        json['free_bikes'],
+      );
 }

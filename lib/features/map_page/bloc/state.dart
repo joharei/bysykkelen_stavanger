@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:bysykkelen_stavanger/models/models.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
@@ -11,9 +13,9 @@ class BikesLoading extends BikesState {}
 class BikesError extends BikesState {}
 
 class BikesLoaded extends BikesState {
-  final List<Station> stations;
+  final Map<Station, Uint8List> stations;
 
   BikesLoaded({@required this.stations})
       : assert(stations != null),
-        super(stations);
+        super([stations]);
 }

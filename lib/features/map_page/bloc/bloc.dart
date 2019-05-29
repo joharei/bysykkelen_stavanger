@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/map_page/bloc/event.dart';
 import 'package:bysykkelen_stavanger/features/map_page/bloc/state.dart';
-import 'package:bysykkelen_stavanger/models/station.dart';
+import 'package:bysykkelen_stavanger/features/map_page/png_generator.dart';
 import 'package:bysykkelen_stavanger/repositories/repositories.dart';
 import 'package:meta/meta.dart';
 
@@ -11,14 +11,8 @@ class BikeStationsBloc extends Bloc<BikesEvent, BikesState> {
   BikeStationsBloc({@required this.bikeRepository})
       : assert(bikeRepository != null);
 
-  List<Station> _stations = [];
-
-  List<Station> get stations => _stations;
-
-  fetchStations() {}
-
   @override
-  BikesState get initialState => BikesLoaded(stations: []);
+  BikesState get initialState => BikesLoaded(stations: {});
 
   @override
   Stream<BikesState> mapEventToState(BikesEvent event) async* {
@@ -27,8 +21,14 @@ class BikeStationsBloc extends Bloc<BikesEvent, BikesState> {
 
       try {
         final stations = await bikeRepository.getBikeStations();
-        yield BikesLoaded(stations: stations);
+        final markers = await Future.wait(
+          stations.map(
+            (station) async => await generatePngForNumber(station.freeBikes),
+          ),
+        );
+        yield BikesLoaded(stations: Map.fromIterables(stations, markers));
       } catch (e) {
+        print(e);
         yield BikesError();
       }
     }

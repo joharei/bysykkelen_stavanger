@@ -33,32 +33,33 @@ class _MapPageState extends State<MapPage> {
     _bikeStationsBloc.dispatch(BikesEvent.start);
   }
 
+  Set<Marker> generateMarkers(BikesState state) {
+    Set<Marker> markers = {};
+    if (state is BikesLoaded) {
+      state.stations.forEach((station, icon) {
+        markers.add(
+          Marker(
+            markerId: MarkerId(station.id),
+            position: LatLng(station.lat, station.lon),
+            icon: BitmapDescriptor.fromBytes(icon),
+            onTap: () => {},
+            consumeTapEvents: true,
+          ),
+        );
+      });
+    }
+    return markers;
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder(
       bloc: _bikeStationsBloc,
-      builder: (_, state) {
-        Set<Marker> markers = {};
-        if (state is BikesLoaded) {
-          for (var station in state.stations) {
-            markers.add(
-              Marker(
-                markerId: MarkerId(station.id),
-                position: LatLng(station.lat, station.lon),
-                infoWindow: InfoWindow(
-                  title: station.name,
-                  snippet: 'Free bikes: ${station.freeBikes}',
-                ),
-              ),
-            );
-          }
-        }
-        return GoogleMap(
-          mapType: MapType.normal,
-          initialCameraPosition: MapPage._stavanger,
-          markers: markers,
-        );
-      },
+      builder: (_, BikesState state) => GoogleMap(
+            mapType: MapType.normal,
+            initialCameraPosition: MapPage._stavanger,
+            markers: generateMarkers(state),
+          ),
     );
   }
 }
