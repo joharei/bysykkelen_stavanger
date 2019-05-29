@@ -6,9 +6,8 @@ import 'package:flutter/rendering.dart';
 
 Future<Uint8List> generatePngForNumber(int number,
     {bool active = false}) async {
-  var diameter = 25 * window.devicePixelRatio;
+  var diameter = 30 * window.devicePixelRatio;
   var strokeWidth = 1 * window.devicePixelRatio;
-  var textYOffset = 4.5 * window.devicePixelRatio;
 
   var recorder = PictureRecorder();
   var c = Canvas(recorder);
@@ -17,7 +16,11 @@ Future<Uint8List> generatePngForNumber(int number,
   circlePaint.color = number == 0
       ? (active ? Colors.grey[700] : Colors.grey)
       : (active ? Colors.blue[900] : Colors.blue);
-  c.drawCircle(Offset(diameter / 2, diameter / 2), diameter / 2, circlePaint);
+  c.drawCircle(
+    Offset(diameter / 2, diameter / 2),
+    diameter / 2 - strokeWidth,
+    circlePaint,
+  );
   var strokePaint = Paint();
   strokePaint.color = number == 0
       ? (active ? Colors.black : Colors.grey[900])
@@ -26,7 +29,7 @@ Future<Uint8List> generatePngForNumber(int number,
   strokePaint.strokeWidth = strokeWidth;
   c.drawCircle(
     Offset(diameter / 2, diameter / 2),
-    diameter / 2 - strokeWidth / 2,
+    diameter / 2 - strokeWidth,
     strokePaint,
   );
 
@@ -37,7 +40,7 @@ Future<Uint8List> generatePngForNumber(int number,
     textDirection: TextDirection.ltr,
   );
   textPainter.layout(minWidth: diameter);
-  textPainter.paint(c, Offset(0, textYOffset));
+  textPainter.paint(c, Offset(0, (diameter - textPainter.height) / 2));
 
   var picture = recorder.endRecording();
   var image = await picture.toImage(diameter.toInt(), diameter.toInt());
