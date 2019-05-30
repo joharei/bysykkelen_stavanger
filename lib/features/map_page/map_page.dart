@@ -1,6 +1,7 @@
 import 'package:bysykkelen_stavanger/features/map_page/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/map_page/bloc/event.dart';
 import 'package:bysykkelen_stavanger/features/map_page/bloc/state.dart';
+import 'package:bysykkelen_stavanger/features/map_page/carousel.dart';
 import 'package:bysykkelen_stavanger/repositories/repositories.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,7 +35,6 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
     _bikeStationsBloc.dispatch(StartPollingStations());
   }
 
-
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
@@ -56,11 +56,27 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return BlocBuilder(
       bloc: _bikeStationsBloc,
-      builder: (_, BikesState state) => GoogleMap(
-            mapType: MapType.normal,
-            initialCameraPosition: MapPage._stavanger,
-            markers: _generateMarkers(state),
-          ),
+      builder: (_, BikesState state) {
+        return Stack(
+          children: [
+            GoogleMap(
+              mapType: MapType.normal,
+              initialCameraPosition: MapPage._stavanger,
+              markers: _generateMarkers(state),
+            ),
+            Container(
+              alignment: Alignment.bottomCenter,
+              margin: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).padding.bottom +
+                      MediaQuery.of(context).viewInsets.bottom),
+              child: BlocProvider(
+                bloc: _bikeStationsBloc,
+                child: BikeCarousel(),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
