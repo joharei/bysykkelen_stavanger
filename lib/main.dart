@@ -4,6 +4,7 @@ import 'package:bysykkelen_stavanger/repositories/bike_repository.dart';
 import 'package:bysykkelen_stavanger/repositories/citibikes_api_client.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 class SimpleBlocDelegate extends BlocDelegate {
   @override
@@ -14,6 +15,13 @@ class SimpleBlocDelegate extends BlocDelegate {
 }
 
 void main() {
+  Crashlytics.instance.enableInDevMode = true;
+
+  // Pass all uncaught errors to Crashlytics.
+  FlutterError.onError = (FlutterErrorDetails details) {
+    Crashlytics.instance.onError(details);
+  };
+
   BlocSupervisor.delegate = SimpleBlocDelegate();
 
   final BikeRepository bikeRepository = BikeRepository(

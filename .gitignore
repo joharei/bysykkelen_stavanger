@@ -73,3 +73,5 @@
 /android/app/src/main/res/values/api_keys.xml
 android/key.jks
 android/key.properties
+android/app/google-services.json
+graphics/

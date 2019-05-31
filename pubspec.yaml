@@ -16,6 +16,7 @@ dependencies:
   flutter_bloc: ^0.15.0
   equatable: ^0.2.5
   google_maps_flutter: ^0.5.15
+  firebase_crashlytics: ^0.0.4+3
 
 dev_dependencies:
   flutter_test:
