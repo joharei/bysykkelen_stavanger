@@ -2,6 +2,7 @@
 <resources>
 
     <style name="LaunchTheme" parent="Theme.V23.Bysykkelen">
+        <item name="android:windowLightNavigationBar">true</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 
