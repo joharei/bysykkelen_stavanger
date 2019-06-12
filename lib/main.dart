@@ -2,9 +2,10 @@ import 'package:bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/map_page/map_page.dart';
 import 'package:bysykkelen_stavanger/repositories/bike_repository.dart';
 import 'package:bysykkelen_stavanger/repositories/citibikes_api_client.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:provider/provider.dart';
 
 class SimpleBlocDelegate extends BlocDelegate {
   @override
@@ -30,15 +31,16 @@ void main() {
     ),
   );
 
-  runApp(App(bikeRepository: bikeRepository));
+  runApp(
+    Provider.value(
+      value: bikeRepository,
+      child: App(),
+    ),
+  );
 }
 
 class App extends StatelessWidget {
-  final BikeRepository bikeRepository;
-
-  App({Key key, @required this.bikeRepository})
-      : assert(bikeRepository != null),
-        super(key: key);
+  App({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -46,6 +48,6 @@ class App extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: MapPage(bikeRepository: bikeRepository),
+        home: MapPage(bikeRepository: Provider.of<BikeRepository>(context)),
       );
 }
