@@ -1,9 +1,9 @@
+import 'package:bysykkelen_stavanger/features/info_card/book_bike_page.dart';
+import 'package:bysykkelen_stavanger/features/map_page/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/map_page/bloc/state.dart';
 import 'package:bysykkelen_stavanger/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'bloc/bloc.dart';
 
 class BikeCarousel extends StatelessWidget {
   final _pageController = PageController(viewportFraction: 0.9);
@@ -30,7 +30,7 @@ class BikeCarousel extends StatelessWidget {
           }
 
           return SizedBox(
-            height: 80,
+            height: 145,
             child: PageView.builder(
               controller: _pageController,
               itemCount: stations.length,
@@ -42,7 +42,17 @@ class BikeCarousel extends StatelessWidget {
                   child: Card(
                     child: ListTile(
                       title: Text(station.name),
-                      subtitle: Text('Free bikes: ${station.freeBikes}'),
+                      subtitle: Column(
+                        children: [
+                          Text('Free bikes: ${station.freeBikes}'),
+                          Padding(padding: EdgeInsets.only(top: 16)),
+                          RaisedButton(
+                            onPressed: () => BookBikePage.show(context),
+                            child: Text('Book bike'),
+                          ),
+                        ],
+                      ),
+                      contentPadding: EdgeInsets.all(16),
                     ),
                   ),
                 );

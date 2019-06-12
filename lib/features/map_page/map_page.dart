@@ -56,7 +56,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return BlocBuilder(
       bloc: _bikeStationsBloc,
-      builder: (_, BikesState state) {
+      builder: (context, BikesState state) {
         return Stack(
           children: [
             GoogleMap(
