@@ -6,9 +6,9 @@ abstract class BookBikeEvent extends Equatable {
 }
 
 class BookBike extends BookBikeEvent {
-  final String stationId;
+  final int stationUid;
 
-  BookBike({@required this.stationId})
-      : assert(stationId != null),
-        super([stationId]);
+  BookBike({@required this.stationUid})
+      : assert(stationUid != null),
+        super([stationUid]);
 }

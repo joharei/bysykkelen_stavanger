@@ -13,6 +13,7 @@ dependencies:
   cupertino_icons: ^0.1.2
 
   http: ^0.12.0+2
+  html: ^0.14.0+2
   flutter_bloc: ^0.15.0
   equatable: ^0.2.5
   google_maps_flutter: ^0.5.15

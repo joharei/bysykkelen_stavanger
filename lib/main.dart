@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/map_page/map_page.dart';
 import 'package:bysykkelen_stavanger/repositories/bike_repository.dart';
+import 'package:bysykkelen_stavanger/repositories/bysykkelen_scraper.dart';
 import 'package:bysykkelen_stavanger/repositories/citibikes_api_client.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
@@ -25,10 +26,10 @@ void main() {
 
   BlocSupervisor.delegate = SimpleBlocDelegate();
 
+  var httpClient = http.Client();
   final BikeRepository bikeRepository = BikeRepository(
-    citibikesApiClient: CitibikesApiClient(
-      httpClient: http.Client(),
-    ),
+    CitibikesApiClient(httpClient: httpClient),
+    BysykkelenScraper(httpClient: httpClient),
   );
 
   runApp(

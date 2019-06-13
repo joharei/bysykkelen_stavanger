@@ -5,13 +5,13 @@ import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 
 class CitibikesApiClient {
-  static const baseUrl = 'http://api.citybik.es/v2';
+  static const _baseUrl = 'http://api.citybik.es/v2';
   final http.Client httpClient;
 
   CitibikesApiClient({@required this.httpClient}) : assert(httpClient != null);
 
   Future<List<Station>> getBikeStations() async {
-    final stationsUrl = '$baseUrl/networks/bysykkelen?fields=stations';
+    final stationsUrl = '$_baseUrl/networks/bysykkelen?fields=stations';
     final stationsResponse = await httpClient.get(stationsUrl);
     if (stationsResponse.statusCode != 200) {
       throw Exception('${stationsResponse.statusCode}: error getting stations');

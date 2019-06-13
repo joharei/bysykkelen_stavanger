@@ -1,14 +1,18 @@
 import 'package:bysykkelen_stavanger/models/models.dart';
+import 'package:bysykkelen_stavanger/repositories/bysykkelen_scraper.dart';
 import 'package:bysykkelen_stavanger/repositories/citibikes_api_client.dart';
-import 'package:meta/meta.dart';
 
 class BikeRepository {
-  final CitibikesApiClient citibikesApiClient;
+  final CitibikesApiClient _citibikesApiClient;
+  final BysykkelenScraper _bysykkelenScraper;
 
-  BikeRepository({@required this.citibikesApiClient})
-      : assert(citibikesApiClient != null);
+  BikeRepository(this._citibikesApiClient, this._bysykkelenScraper)
+      : assert(_citibikesApiClient != null),
+        assert(_bysykkelenScraper != null);
 
   Future<List<Station>> getBikeStations() async {
-    return await citibikesApiClient.getBikeStations();
+    return await _citibikesApiClient.getBikeStations();
   }
+
+  bookBike(int uid) async => _bysykkelenScraper.bookBike(uid);
 }
