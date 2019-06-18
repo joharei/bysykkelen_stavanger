@@ -26,7 +26,11 @@ class BookBikeBloc extends Bloc<BookBikeEvent, BookBikeState> {
         event.password,
       );
 
-      yield BookingReady();
+      yield BookingDone();
+
+      await Future.delayed(Duration(seconds: 1));
+
+      yield CloseBookingPage();
     }
   }
 }
