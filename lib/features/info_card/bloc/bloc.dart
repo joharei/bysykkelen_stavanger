@@ -18,7 +18,13 @@ class BookBikeBloc extends Bloc<BookBikeEvent, BookBikeState> {
     if (event is BookBike) {
       yield BookingLoading();
 
-      await bikeRepository.bookBike(event.stationUid);
+      await bikeRepository.bookBike(
+        event.stationUid,
+        event.bookingDateTime,
+        event.minimumDateTime,
+        event.userName,
+        event.password,
+      );
 
       yield BookingReady();
     }

@@ -14,5 +14,18 @@ class BikeRepository {
     return await _citibikesApiClient.getBikeStations();
   }
 
-  bookBike(int uid) async => _bysykkelenScraper.bookBike(uid);
+  bookBike(
+    int stationUid,
+    DateTime bookingDateTime,
+    DateTime minimumDateTime,
+    String userName,
+    String password,
+  ) async =>
+      _bysykkelenScraper.bookBike(
+        stationUid,
+        bookingDateTime,
+        minimumDateTime,
+        userName,
+        password,
+      );
 }

@@ -8,7 +8,13 @@ class BysykkelenScraper {
 
   BysykkelenScraper({@required this.httpClient}) : assert(httpClient != null);
 
-  bookBike(int uid) async {
+  bookBike(
+    int stationUid,
+    DateTime bookingDateTime,
+    DateTime minimumDateTime,
+    String userName,
+    String password,
+  ) async {
     var loginFormResponse = await httpClient.get('$_baseUrl/account/signin');
 
     var cookieJar = CookieJar.fromResponse(loginFormResponse);
@@ -21,8 +27,8 @@ class BysykkelenScraper {
     var loginResponse = await httpClient.post(
       '$_baseUrl/account/signin',
       body: {
-        'UserName': '',
-        'Password': '',
+        'UserName': userName,
+        'Password': password,
         '__RequestVerificationToken': loginFormToken,
       },
       headers: {'Cookie': cookieJar.toString()},
@@ -30,7 +36,7 @@ class BysykkelenScraper {
     cookieJar.update(loginResponse);
 
     var bookingFormResponse = await httpClient.get(
-      '$_baseUrl/reservations/add?dsId=$uid&isNotEmpty=True',
+      '$_baseUrl/reservations/add?dsId=$stationUid&isNotEmpty=True',
       headers: {'Cookie': cookieJar.toString()},
     );
     var bookingFormDocument = parser.parse(bookingFormResponse.body);
@@ -42,18 +48,24 @@ class BysykkelenScraper {
         .attributes['value'];
 
     var bookingResponse = await httpClient.post(
-      '$_baseUrl/reservations/add?dsId=$uid&isNotEmpty=True',
+      '$_baseUrl/reservations/add?dsId=$stationUid&isNotEmpty=True',
       body: {
-        'StartDate': '14/06/2019 14:00',
-        'MinDate': '13/06/2019 23:10',
-        'DockingStationId': '$uid',
+        'StartDate': _formatDateTime(bookingDateTime),
+        'MinDate': _formatDateTime(minimumDateTime),
+        'DockingStationId': '$stationUid',
         'MaxDays': maxDays,
         '__RequestVerificationToken': bookingFormToken,
       },
       headers: {'Cookie': cookieJar.toString()},
     );
-    print(bookingResponse.body);
+    if(bookingResponse.statusCode != 200) {
+      throw Exception();
+    }
   }
+
+  /// Formats [dateTime] as 'DD/MM/YYYY HH:mm'
+  String _formatDateTime(DateTime dateTime) =>
+      '${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year.toString()} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
 }
 
 class CookieJar {

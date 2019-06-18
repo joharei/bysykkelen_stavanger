@@ -7,8 +7,27 @@ abstract class BookBikeEvent extends Equatable {
 
 class BookBike extends BookBikeEvent {
   final int stationUid;
+  final DateTime bookingDateTime;
+  final DateTime minimumDateTime;
+  final String userName;
+  final String password;
 
-  BookBike({@required this.stationUid})
-      : assert(stationUid != null),
-        super([stationUid]);
+  BookBike({
+    @required this.stationUid,
+    @required this.bookingDateTime,
+    @required this.minimumDateTime,
+    @required this.userName,
+    @required this.password,
+  })  : assert(stationUid != null),
+        assert(bookingDateTime != null),
+        assert(minimumDateTime != null),
+        assert(userName != null),
+        assert(password != null),
+        super([
+          stationUid,
+          bookingDateTime,
+          minimumDateTime,
+          userName,
+          password,
+        ]);
 }

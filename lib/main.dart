@@ -4,6 +4,7 @@ import 'package:bysykkelen_stavanger/repositories/bike_repository.dart';
 import 'package:bysykkelen_stavanger/repositories/bysykkelen_scraper.dart';
 import 'package:bysykkelen_stavanger/repositories/citibikes_api_client.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -47,6 +48,16 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp(
         theme: ThemeData(
           primarySwatch: Colors.blue,
+          buttonTheme: ButtonThemeData(
+            colorScheme: ColorScheme.fromSwatch(),
+            textTheme: ButtonTextTheme.primary,
+          ),
+          cupertinoOverrideTheme: CupertinoThemeData(
+            textTheme: CupertinoTextThemeData(
+              dateTimePickerTextStyle:
+                  Theme.of(context).textTheme.subhead.copyWith(),
+            ),
+          ),
         ),
         home: MapPage(bikeRepository: Provider.of<BikeRepository>(context)),
       );
