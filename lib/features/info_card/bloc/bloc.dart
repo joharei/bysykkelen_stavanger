@@ -18,13 +18,26 @@ class BookBikeBloc extends Bloc<BookBikeEvent, BookBikeState> {
     if (event is BookBike) {
       yield BookingLoading();
 
-      await bikeRepository.bookBike(
-        event.stationUid,
-        event.bookingDateTime,
-        event.minimumDateTime,
-        event.userName,
-        event.password,
-      );
+      final spinAtLeastUntil = DateTime.now().add(Duration(seconds: 1));
+
+      try {
+        await bikeRepository.bookBike(
+          event.stationUid,
+          event.bookingDateTime,
+          event.minimumDateTime,
+          event.userName,
+          event.password,
+        );
+      } catch (e) {
+        yield BookingError();
+        return;
+      }
+
+      final now = DateTime.now();
+      if (spinAtLeastUntil.isAfter(now)) {
+        // Delay a little if the booking was too fast for the animation to complete
+        await Future.delayed(spinAtLeastUntil.difference(now));
+      }
 
       yield BookingDone();
 

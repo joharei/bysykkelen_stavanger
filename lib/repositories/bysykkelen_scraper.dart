@@ -15,51 +15,56 @@ class BysykkelenScraper {
     String userName,
     String password,
   ) async {
-    var loginFormResponse = await httpClient.get('$_baseUrl/account/signin');
+    try {
+      var loginFormResponse = await httpClient.get('$_baseUrl/account/signin');
 
-    var cookieJar = CookieJar.fromResponse(loginFormResponse);
+      var cookieJar = CookieJar.fromResponse(loginFormResponse);
 
-    var loginFormToken = parser
-        .parse(loginFormResponse.body)
-        .querySelector('input[name=__RequestVerificationToken]')
-        .attributes['value'];
+      var loginFormToken = parser
+          .parse(loginFormResponse.body)
+          .querySelector('input[name=__RequestVerificationToken]')
+          .attributes['value'];
 
-    var loginResponse = await httpClient.post(
-      '$_baseUrl/account/signin',
-      body: {
-        'UserName': userName,
-        'Password': password,
-        '__RequestVerificationToken': loginFormToken,
-      },
-      headers: {'Cookie': cookieJar.toString()},
-    );
-    cookieJar.update(loginResponse);
+      var loginResponse = await httpClient.post(
+        '$_baseUrl/account/signin',
+        body: {
+          'UserName': userName,
+          'Password': password,
+          '__RequestVerificationToken': loginFormToken,
+        },
+        headers: {'Cookie': cookieJar.toString()},
+      );
+      cookieJar.update(loginResponse);
 
-    var bookingFormResponse = await httpClient.get(
-      '$_baseUrl/reservations/add?dsId=$stationUid&isNotEmpty=True',
-      headers: {'Cookie': cookieJar.toString()},
-    );
-    var bookingFormDocument = parser.parse(bookingFormResponse.body);
-    var bookingFormToken = bookingFormDocument
-        .querySelector('input[name=__RequestVerificationToken]')
-        .attributes['value'];
-    var maxDays = bookingFormDocument
-        .querySelector('input[name=MaxDays]')
-        .attributes['value'];
+      var bookingFormResponse = await httpClient.get(
+        '$_baseUrl/reservations/add?dsId=$stationUid&isNotEmpty=True',
+        headers: {'Cookie': cookieJar.toString()},
+      );
+      var bookingFormDocument = parser.parse(bookingFormResponse.body);
+      var bookingFormToken = bookingFormDocument
+          .querySelector('input[name=__RequestVerificationToken]')
+          .attributes['value'];
+      var maxDays = bookingFormDocument
+          .querySelector('input[name=MaxDays]')
+          .attributes['value'];
 
-    var bookingResponse = await httpClient.post(
-      '$_baseUrl/reservations/add?dsId=$stationUid&isNotEmpty=True',
-      body: {
-        'StartDate': _formatDateTime(bookingDateTime),
-        'MinDate': _formatDateTime(minimumDateTime),
-        'DockingStationId': '$stationUid',
-        'MaxDays': maxDays,
-        '__RequestVerificationToken': bookingFormToken,
-      },
-      headers: {'Cookie': cookieJar.toString()},
-    );
-    if(bookingResponse.statusCode != 200) {
-      throw Exception();
+      var bookingResponse = await httpClient.post(
+        '$_baseUrl/reservations/add?dsId=$stationUid&isNotEmpty=True',
+        body: {
+          'StartDate': _formatDateTime(bookingDateTime),
+          'MinDate': _formatDateTime(minimumDateTime),
+          'DockingStationId': '$stationUid',
+          'MaxDays': maxDays,
+          '__RequestVerificationToken': bookingFormToken,
+        },
+        headers: {'Cookie': cookieJar.toString()},
+      );
+      if (bookingResponse.statusCode < 200 ||
+          bookingResponse.statusCode >= 400) {
+        throw ScraperException();
+      }
+    } catch (e) {
+      throw ScraperException();
     }
   }
 
@@ -100,3 +105,5 @@ class CookieJar {
     return Map.fromEntries(cookieList);
   }
 }
+
+class ScraperException implements Exception {}

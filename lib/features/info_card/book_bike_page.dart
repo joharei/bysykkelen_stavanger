@@ -63,7 +63,8 @@ class _BookBikePageState extends State<BookBikePage> {
       _getMinimumDateTime().add(Duration(minutes: 30));
 
   Future<UsernameAndPassword> _promptForUsernameAndPassword(
-      BuildContext context) async {
+    BuildContext context,
+  ) async {
     String userName;
     String password;
     return showDialog(
@@ -106,6 +107,7 @@ class _BookBikePageState extends State<BookBikePage> {
   }
 
   _addBookingButtonPressed(
+    BuildContext context,
     DateTime minimumDateTime,
     DateTime maximumDateTime,
   ) async {
@@ -146,6 +148,26 @@ class _BookBikePageState extends State<BookBikePage> {
     ));
   }
 
+  _showErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text('Something went wrong while booking the bike 😲'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final minimumDateTime = _getMinimumDateTime();
@@ -156,6 +178,8 @@ class _BookBikePageState extends State<BookBikePage> {
       listener: (context, state) {
         if (state is CloseBookingPage) {
           Navigator.of(context).pop();
+        } else if (state is BookingError) {
+          _showErrorDialog(context);
         }
       },
       child: BlocBuilder(
@@ -194,6 +218,7 @@ class _BookBikePageState extends State<BookBikePage> {
                               ? ProgressState.done
                               : ProgressState.idle,
                   onPressed: () => _addBookingButtonPressed(
+                        context,
                         minimumDateTime,
                         maximumDateTime,
                       ),

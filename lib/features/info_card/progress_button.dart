@@ -34,7 +34,10 @@ class _ProgressButtonState extends State<ProgressButton>
   void didUpdateWidget(ProgressButton oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.state == ProgressState.loading) {
-      animateButton();
+      animateButton(true);
+    } else if (widget.state == ProgressState.idle &&
+        oldWidget.state == ProgressState.loading) {
+      animateButton(false);
     }
   }
 
@@ -54,7 +57,9 @@ class _ProgressButtonState extends State<ProgressButton>
         child: setUpButtonChild(),
         onPressed: () => widget.onPressed(),
         elevation: 4.0,
-        color: widget.state == ProgressState.done ? Colors.lightGreen : Colors.blue,
+        color: widget.state == ProgressState.done
+            ? Colors.lightGreen
+            : Colors.blue,
       ),
     );
   }
@@ -82,10 +87,12 @@ class _ProgressButtonState extends State<ProgressButton>
     }
   }
 
-  void animateButton() {
+  void animateButton(bool toLoading) {
+    final begin = toLoading ? 0.0 : 1.0;
+    final end = toLoading ? 1.0 : 0.0;
     _controller =
         AnimationController(duration: Duration(milliseconds: 300), vsync: this);
-    _animation = Tween(begin: 0.0, end: 1.0).animate(_controller)
+    _animation = Tween(begin: begin, end: end).animate(_controller)
       ..addListener(() {
         setState(() {
           _width = initialWidth - ((initialWidth - 48.0) * _animation.value);
