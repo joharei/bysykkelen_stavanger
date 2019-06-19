@@ -22,7 +22,7 @@ class BookBikeBloc extends Bloc<BookBikeEvent, BookBikeState> {
 
       try {
         await bikeRepository.bookBike(
-          event.stationUid,
+          event.station,
           event.bookingDateTime,
           event.minimumDateTime,
           event.userName,

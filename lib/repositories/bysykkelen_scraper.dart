@@ -1,3 +1,4 @@
+import 'package:bysykkelen_stavanger/models/models.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
@@ -9,7 +10,7 @@ class BysykkelenScraper {
   BysykkelenScraper({@required this.httpClient}) : assert(httpClient != null);
 
   bookBike(
-    int stationUid,
+    Station station,
     DateTime bookingDateTime,
     DateTime minimumDateTime,
     String userName,
@@ -36,8 +37,10 @@ class BysykkelenScraper {
       );
       cookieJar.update(loginResponse);
 
+      final isNotEmpty = station.freeBikes > 0 ? 'True' : 'False';
+
       var bookingFormResponse = await httpClient.get(
-        '$_baseUrl/reservations/add?dsId=$stationUid&isNotEmpty=True',
+        '$_baseUrl/reservations/add?dsId=${station.uid}&isNotEmpty=$isNotEmpty',
         headers: {'Cookie': cookieJar.toString()},
       );
       var bookingFormDocument = parser.parse(bookingFormResponse.body);
@@ -49,11 +52,11 @@ class BysykkelenScraper {
           .attributes['value'];
 
       var bookingResponse = await httpClient.post(
-        '$_baseUrl/reservations/add?dsId=$stationUid&isNotEmpty=True',
+        '$_baseUrl/reservations/add?dsId=${station.uid}&isNotEmpty=$isNotEmpty',
         body: {
           'StartDate': _formatDateTime(bookingDateTime),
           'MinDate': _formatDateTime(minimumDateTime),
-          'DockingStationId': '$stationUid',
+          'DockingStationId': '${station.uid}',
           'MaxDays': maxDays,
           '__RequestVerificationToken': bookingFormToken,
         },

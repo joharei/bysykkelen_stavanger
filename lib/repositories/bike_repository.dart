@@ -15,14 +15,14 @@ class BikeRepository {
   }
 
   bookBike(
-    int stationUid,
+    Station station,
     DateTime bookingDateTime,
     DateTime minimumDateTime,
     String userName,
     String password,
   ) async =>
       _bysykkelenScraper.bookBike(
-        stationUid,
+        station,
         bookingDateTime,
         minimumDateTime,
         userName,

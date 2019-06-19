@@ -140,7 +140,7 @@ class _BookBikePageState extends State<BookBikePage> {
     }
 
     _bookBikeBloc.dispatch(BookBike(
-      stationUid: widget._station.uid,
+      station: widget._station,
       bookingDateTime: _chosenDate,
       minimumDateTime: minimumDateTime,
       userName: userNameAndPassword.userName,
