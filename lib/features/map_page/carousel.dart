@@ -1,4 +1,4 @@
-import 'package:bysykkelen_stavanger/features/info_card/book_bike_page.dart';
+import 'package:bysykkelen_stavanger/features/book_bike/book_bike_page.dart';
 import 'package:bysykkelen_stavanger/features/map_page/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/map_page/bloc/state.dart';
 import 'package:bysykkelen_stavanger/models/models.dart';

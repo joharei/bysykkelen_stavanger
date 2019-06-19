@@ -14,18 +14,19 @@ class BikeRepository {
     return await _citibikesApiClient.getBikeStations();
   }
 
-  bookBike(
+  Future<bool> loggedIn() => _bysykkelenScraper.loggedIn();
+
+  Future<bool> login(String userName, String password) =>
+      _bysykkelenScraper.login(userName, password);
+
+  Future<bool> bookBike(
     Station station,
     DateTime bookingDateTime,
     DateTime minimumDateTime,
-    String userName,
-    String password,
-  ) async =>
+  ) =>
       _bysykkelenScraper.bookBike(
         station,
         bookingDateTime,
         minimumDateTime,
-        userName,
-        password,
       );
 }

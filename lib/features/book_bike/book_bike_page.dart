@@ -1,8 +1,7 @@
-import 'package:bysykkelen_stavanger/features/info_card/bloc/bloc.dart';
-import 'package:bysykkelen_stavanger/features/info_card/bloc/event.dart';
-import 'package:bysykkelen_stavanger/features/info_card/bloc/state.dart';
-import 'package:bysykkelen_stavanger/features/info_card/progress_button.dart';
-import 'package:bysykkelen_stavanger/features/info_card/username_and_password.dart';
+import 'package:bysykkelen_stavanger/features/book_bike/bloc/bloc.dart';
+import 'package:bysykkelen_stavanger/features/book_bike/bloc/event.dart';
+import 'package:bysykkelen_stavanger/features/book_bike/bloc/state.dart';
+import 'package:bysykkelen_stavanger/features/book_bike/progress_button.dart';
 import 'package:bysykkelen_stavanger/models/models.dart';
 import 'package:bysykkelen_stavanger/repositories/bike_repository.dart';
 import 'package:flutter/cupertino.dart';
@@ -62,50 +61,6 @@ class _BookBikePageState extends State<BookBikePage> {
   DateTime _getInitialDateTime() =>
       _getMinimumDateTime().add(Duration(minutes: 30));
 
-  Future<UsernameAndPassword> _promptForUsernameAndPassword(
-    BuildContext context,
-  ) async {
-    String userName;
-    String password;
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Log in'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                TextField(
-                  autofocus: true,
-                  decoration: InputDecoration(labelText: 'User name'),
-                  autocorrect: false,
-                  onChanged: (value) {
-                    userName = value;
-                  },
-                ),
-                TextField(
-                  decoration: InputDecoration(labelText: 'Password'),
-                  autocorrect: false,
-                  obscureText: true,
-                  onChanged: (value) {
-                    password = value;
-                  },
-                ),
-              ],
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Ok'),
-                onPressed: () {
-                  Navigator.of(context)
-                      .pop(UsernameAndPassword(userName, password));
-                },
-              ),
-            ],
-          );
-        });
-  }
-
   _addBookingButtonPressed(
     BuildContext context,
     DateTime minimumDateTime,
@@ -134,17 +89,11 @@ class _BookBikePageState extends State<BookBikePage> {
       return;
     }
 
-    final userNameAndPassword = await _promptForUsernameAndPassword(context);
-    if (userNameAndPassword == null) {
-      return;
-    }
-
     _bookBikeBloc.dispatch(BookBike(
       station: widget._station,
       bookingDateTime: _chosenDate,
       minimumDateTime: minimumDateTime,
-      userName: userNameAndPassword.userName,
-      password: userNameAndPassword.password,
+      context: context,
     ));
   }
 
@@ -218,10 +167,10 @@ class _BookBikePageState extends State<BookBikePage> {
                               ? ProgressState.done
                               : ProgressState.idle,
                   onPressed: () => _addBookingButtonPressed(
-                        context,
-                        minimumDateTime,
-                        maximumDateTime,
-                      ),
+                    context,
+                    minimumDateTime,
+                    maximumDateTime,
+                  ),
                 ),
               ),
             ],
