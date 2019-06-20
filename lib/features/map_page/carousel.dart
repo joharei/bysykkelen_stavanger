@@ -41,18 +41,24 @@ class BikeCarousel extends StatelessWidget {
                   width: MediaQuery.of(context).size.width,
                   margin: EdgeInsets.symmetric(horizontal: 5),
                   child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                     child: ListTile(
-                      title: Text(station.name),
+                      title: Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Center(child: Text(station.name), heightFactor: 1),
+                      ),
                       subtitle: Column(
                         children: [
                           Text('Free bikes: ${station.freeBikes}'),
                           Padding(padding: EdgeInsets.only(top: 16)),
                           RaisedButton(
                             onPressed: () => BookBikePage.show(
-                                  context,
-                                  Provider.of(context),
-                                  station,
-                                ),
+                              context,
+                              Provider.of(context),
+                              station,
+                            ),
                             child: Text('Book bike'),
                           ),
                         ],
