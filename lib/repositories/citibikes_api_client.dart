@@ -1,24 +1,22 @@
-import 'dart:convert';
-
 import 'package:bysykkelen_stavanger/models/models.dart';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 
 class CitibikesApiClient {
   static const _baseUrl = 'http://api.citybik.es/v2';
-  final http.Client httpClient;
+  final Dio dio;
 
-  CitibikesApiClient({@required this.httpClient}) : assert(httpClient != null);
+  CitibikesApiClient({@required this.dio}) : assert(dio != null);
 
   Future<List<Station>> getBikeStations() async {
-    final stationsUrl = '$_baseUrl/networks/bysykkelen?fields=stations';
-    final stationsResponse = await httpClient.get(stationsUrl);
-    if (stationsResponse.statusCode != 200) {
-      throw Exception('${stationsResponse.statusCode}: error getting stations');
-    }
+    dio.options = BaseOptions(
+      responseType: ResponseType.json,
+    );
 
-    final stationsJson =
-        jsonDecode(stationsResponse.body)['network']['stations'] as List;
+    final stationsUrl = '$_baseUrl/networks/bysykkelen?fields=stations';
+    final stationsResponse = await dio.get(stationsUrl);
+
+    final stationsJson = stationsResponse.data['network']['stations'] as List;
     return stationsJson.map((json) => Station.fromJson(json)).toList();
   }
 }

@@ -10,9 +10,11 @@ class BysykkelenScraper {
   BysykkelenScraper({@required this.dio}) : assert(dio != null);
 
   Future<bool> loggedIn() async {
-    dio.options.responseType = ResponseType.plain;
-    dio.options.validateStatus = (status) => status == 200;
-    dio.options.followRedirects = false;
+    dio.options = BaseOptions(
+      responseType: ResponseType.plain,
+      validateStatus: (status) => status == 200,
+      followRedirects: false,
+    );
 
     try {
       await dio.get('$_baseUrl/dashboard');
@@ -23,8 +25,10 @@ class BysykkelenScraper {
   }
 
   Future<bool> login(String userName, String password) async {
-    dio.options.responseType = ResponseType.plain;
-    dio.options.validateStatus = (status) => status == 200 || status == 302;
+    dio.options = BaseOptions(
+      responseType: ResponseType.plain,
+      validateStatus: (status) => status == 200 || status == 302,
+    );
 
     try {
       final loginFormResponse = await dio.get('$_baseUrl/account/signin');
@@ -54,8 +58,10 @@ class BysykkelenScraper {
     DateTime bookingDateTime,
     DateTime minimumDateTime,
   ) async {
-    dio.options.responseType = ResponseType.plain;
-    dio.options.validateStatus = (status) => status == 200 || status == 302;
+    dio.options = BaseOptions(
+      responseType: ResponseType.plain,
+      validateStatus: (status) => status == 200 || status == 302,
+    );
 
     try {
       final isNotEmpty = station.freeBikes > 0 ? 'True' : 'False';
