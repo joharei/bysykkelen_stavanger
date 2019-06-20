@@ -1,3 +1,4 @@
+import 'package:bysykkelen_stavanger/features/bookings_list/bookings_list_page.dart';
 import 'package:bysykkelen_stavanger/features/map_page/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/map_page/bloc/event.dart';
 import 'package:bysykkelen_stavanger/features/map_page/bloc/state.dart';
@@ -69,9 +70,26 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
               margin: EdgeInsets.only(
                   bottom: MediaQuery.of(context).padding.bottom +
                       MediaQuery.of(context).viewInsets.bottom),
-              child: BlocProvider(
-                bloc: _bikeStationsBloc,
-                child: BikeCarousel(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(
+                      bottom: 16,
+                      right: MediaQuery.of(context).size.width * 0.05 + 6,
+                    ),
+                    child: FloatingActionButton(
+                      onPressed: () => BookingsListPage.show(context),
+                      child: Icon(Icons.view_list),
+                      tooltip: 'Bookings',
+                    ),
+                  ),
+                  BlocProvider(
+                    bloc: _bikeStationsBloc,
+                    child: BikeCarousel(),
+                  ),
+                ],
               ),
             ),
           ],

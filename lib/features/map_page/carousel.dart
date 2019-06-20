@@ -31,7 +31,7 @@ class BikeCarousel extends StatelessWidget {
           }
 
           return SizedBox(
-            height: 145,
+            height: 165,
             child: PageView.builder(
               controller: _pageController,
               itemCount: stations.length,
@@ -39,15 +39,19 @@ class BikeCarousel extends StatelessWidget {
                 var station = stations[index];
                 return Container(
                   width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.symmetric(horizontal: 5),
+                  margin: EdgeInsets.only(left: 4, right: 4, bottom: 16),
                   child: Card(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
+                    elevation: 6,
                     child: ListTile(
                       title: Padding(
                         padding: const EdgeInsets.only(bottom: 8),
-                        child: Center(child: Text(station.name), heightFactor: 1),
+                        child: Center(
+                          child: Text(station.name),
+                          heightFactor: 1,
+                        ),
                       ),
                       subtitle: Column(
                         children: [
