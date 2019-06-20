@@ -1,3 +1,4 @@
+import 'package:bysykkelen_stavanger/features/bookings_list/booking.dart';
 import 'package:bysykkelen_stavanger/models/models.dart';
 import 'package:dio/dio.dart';
 import 'package:html/parser.dart' as parser;
@@ -93,6 +94,10 @@ class BysykkelenScraper {
     } catch (e) {
       return false;
     }
+  }
+
+  Future<Booking> fetchBookings() {
+
   }
 
   /// Formats [dateTime] as 'DD/MM/YYYY HH:mm'

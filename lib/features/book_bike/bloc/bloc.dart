@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/book_bike/bloc/event.dart';
 import 'package:bysykkelen_stavanger/features/book_bike/bloc/state.dart';
-import 'package:bysykkelen_stavanger/features/book_bike/username_and_password.dart';
 import 'package:bysykkelen_stavanger/repositories/bike_repository.dart';
+import 'package:bysykkelen_stavanger/shared/login_prompt.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
@@ -22,7 +22,7 @@ class BookBikeBloc extends Bloc<BookBikeEvent, BookBikeState> {
 
       if (!await bikeRepository.loggedIn()) {
         final userNameAndPassword =
-            await _promptForUsernameAndPassword(event.context);
+            await promptForUsernameAndPassword(event.context);
         if (userNameAndPassword == null) {
           yield BookingReady();
           return;
@@ -59,49 +59,5 @@ class BookBikeBloc extends Bloc<BookBikeEvent, BookBikeState> {
 
       yield CloseBookingPage();
     }
-  }
-
-  Future<UsernameAndPassword> _promptForUsernameAndPassword(
-    BuildContext context,
-  ) async {
-    String userName;
-    String password;
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Log in'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                TextField(
-                  autofocus: true,
-                  decoration: InputDecoration(labelText: 'User name'),
-                  autocorrect: false,
-                  onChanged: (value) {
-                    userName = value;
-                  },
-                ),
-                TextField(
-                  decoration: InputDecoration(labelText: 'Password'),
-                  autocorrect: false,
-                  obscureText: true,
-                  onChanged: (value) {
-                    password = value;
-                  },
-                ),
-              ],
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Ok'),
-                onPressed: () {
-                  Navigator.of(context)
-                      .pop(UsernameAndPassword(userName, password));
-                },
-              ),
-            ],
-          );
-        });
   }
 }
