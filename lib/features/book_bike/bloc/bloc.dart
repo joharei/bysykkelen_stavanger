@@ -55,7 +55,7 @@ class BookBikeBloc extends Bloc<BookBikeEvent, BookBikeState> {
 
       yield BookingDone();
 
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(Duration(seconds: 3));
 
       yield CloseBookingPage();
     }
