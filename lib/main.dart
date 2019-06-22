@@ -54,10 +54,8 @@ class App extends StatelessWidget {
           primaryColor: Colors.blue,
           primaryColorBrightness: Brightness.dark,
           accentColor: Colors.blue,
-
           scaffoldBackgroundColor: Colors.white,
           canvasColor: Colors.white,
-
           appBarTheme: AppBarTheme(
             brightness: Brightness.light,
             color: Colors.white,
@@ -65,7 +63,6 @@ class App extends StatelessWidget {
             iconTheme: Theme.of(context).iconTheme,
             actionsIconTheme: Theme.of(context).iconTheme,
           ),
-
           buttonTheme: ButtonThemeData(
             colorScheme: ColorScheme.fromSwatch(),
             textTheme: ButtonTextTheme.primary,
@@ -74,14 +71,13 @@ class App extends StatelessWidget {
             backgroundColor: Colors.white,
             foregroundColor: Colors.blueAccent,
           ),
-
+          snackBarTheme: SnackBarThemeData(behavior: SnackBarBehavior.floating),
           pageTransitionsTheme: PageTransitionsTheme(
             builders: {
               TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
               TargetPlatform.android: OpenUpwardsPageTransitionsBuilder(),
             },
           ),
-
           cupertinoOverrideTheme: CupertinoThemeData(
             textTheme: CupertinoTextThemeData(
               dateTimePickerTextStyle:
