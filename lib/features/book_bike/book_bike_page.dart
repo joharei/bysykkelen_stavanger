@@ -31,6 +31,7 @@ class BookBikePage extends StatefulWidget {
         ),
         backgroundColor: Colors.white,
         builder: (context) => BookBikePage(bikeRepository, station),
+        isScrollControlled: true,
       );
 }
 
@@ -123,59 +124,66 @@ class _BookBikePageState extends State<BookBikePage> {
     final minimumDateTime = _getMinimumDateTime();
     final maximumDateTime = _getMaximumDateTime();
 
-    return BlocListener(
-      bloc: _bookBikeBloc,
-      listener: (context, state) {
-        if (state is CloseBookingPage) {
-          Navigator.of(context).pop();
-        } else if (state is BookingError) {
-          _showErrorDialog(context);
-        }
-      },
-      child: BlocBuilder(
+    return DraggableScrollableSheet(
+      expand: false,
+      maxChildSize: 0.5,
+      builder: (context, scrollController) {
+        return BlocListener(
         bloc: _bookBikeBloc,
-        builder: (context, state) {
-          return ListView(
-            padding: EdgeInsets.only(
-              left: 32,
-              right: 32,
-              top: 32,
-              bottom: safeAreaBottomInset(context) + 8,
-            ),
-            children: [
-              Text('Book bike', style: Theme.of(context).textTheme.headline),
-              Container(
-                height: MediaQuery.of(context).size.height / 4,
-                child: CupertinoDatePicker(
-                  onDateTimeChanged: (date) => _chosenDate = date,
-                  use24hFormat: MediaQuery.of(context).alwaysUse24HourFormat,
-                  initialDateTime: _getInitialDateTime(),
-                  minimumDate: minimumDateTime.subtract(Duration(days: 1)),
-                  maximumDate: maximumDateTime,
-                  minuteInterval: 5,
-                ),
-              ),
-              Center(
-                child: ProgressButton(
-                  text: 'Add booking',
-                  state: state is BookingLoading
-                      ? ProgressState.loading
-                      : state is BookingDone
-                          ? ProgressState.done
-                          : state is CloseBookingPage
-                              ? ProgressState.done
-                              : ProgressState.idle,
-                  onPressed: () => _addBookingButtonPressed(
-                        context,
-                        minimumDateTime,
-                        maximumDateTime,
-                      ),
-                ),
-              ),
-            ],
-          );
+        listener: (context, state) {
+          if (state is CloseBookingPage) {
+            Navigator.of(context).pop();
+          } else if (state is BookingError) {
+            _showErrorDialog(context);
+          }
         },
-      ),
+        child: BlocBuilder(
+          bloc: _bookBikeBloc,
+          builder: (context, state) {
+            return ListView(
+              controller: scrollController,
+              padding: EdgeInsets.only(
+                left: 32,
+                right: 32,
+                top: 32,
+                bottom: safeAreaBottomInset(context) + 8,
+              ),
+              children: [
+                Text('Book bike', style: Theme.of(context).textTheme.headline),
+                Container(
+                  height: MediaQuery.of(context).size.height / 4,
+                  child: CupertinoDatePicker(
+                    onDateTimeChanged: (date) => _chosenDate = date,
+                    use24hFormat: MediaQuery.of(context).alwaysUse24HourFormat,
+                    initialDateTime: _getInitialDateTime(),
+                    minimumDate: minimumDateTime.subtract(Duration(days: 1)),
+                    maximumDate: maximumDateTime,
+                    minuteInterval: 5,
+                  ),
+                ),
+                Center(
+                  child: ProgressButton(
+                    text: 'Add booking',
+                    state: state is BookingLoading
+                        ? ProgressState.loading
+                        : state is BookingDone
+                            ? ProgressState.done
+                            : state is CloseBookingPage
+                                ? ProgressState.done
+                                : ProgressState.idle,
+                    onPressed: () => _addBookingButtonPressed(
+                          context,
+                          minimumDateTime,
+                          maximumDateTime,
+                        ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      );
+      },
     );
   }
 }
