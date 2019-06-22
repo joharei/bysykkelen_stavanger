@@ -67,15 +67,15 @@ class BysykkelenScraper {
     try {
       final isNotEmpty = station.freeBikes > 0 ? 'True' : 'False';
 
-      var bookingFormResponse = await dio.get(
+      final bookingFormResponse = await dio.get(
         '$_baseUrl/reservations/add?dsId=${station.uid}&isNotEmpty=$isNotEmpty',
       );
-      var bookingFormDocument =
+      final bookingFormDocument =
           parser.parse(bookingFormResponse.data.toString());
-      var bookingFormToken = bookingFormDocument
+      final bookingFormToken = bookingFormDocument
           .querySelector('input[name=__RequestVerificationToken]')
           .attributes['value'];
-      var maxDays = bookingFormDocument
+      final maxDays = bookingFormDocument
           .querySelector('input[name=MaxDays]')
           .attributes['value'];
 
@@ -96,11 +96,43 @@ class BysykkelenScraper {
     }
   }
 
-  Future<Booking> fetchBookings() {
+  Future<List<Booking>> fetchBookings() async {
+    dio.options = BaseOptions(
+      baseUrl: _baseUrl,
+      responseType: ResponseType.plain,
+      validateStatus: (status) => status == 200,
+    );
 
+    try {
+      final bookingsResponse =
+          await dio.get('/reservations/indextable', queryParameters: {
+        'NoHeader': 'False',
+        'Page': 0,
+      });
+      final bookingsDocument = parser.parse(bookingsResponse.data.toString());
+      final bookingElements =
+          bookingsDocument.querySelectorAll('table tr[data-reservation-id]');
+      final bookings = bookingElements.map((element) {
+        return Booking(
+            stationName: element.children[2].text,
+            time: element.children[1].text,
+            id: element.attributes['data-reservation-id'],
+            requestVerificationToken: element
+                .querySelector('input[name=__RequestVerificationToken]')
+                .attributes['value'],
+          );
+      });
+      return bookings.toList();
+    } catch (e) {
+      return null;
+    }
   }
 
   /// Formats [dateTime] as 'DD/MM/YYYY HH:mm'
   String _formatDateTime(DateTime dateTime) =>
-      '${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year.toString()} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+      '${dateTime.day.toString().padLeft(2, '0')}/'
+      '${dateTime.month.toString().padLeft(2, '0')}/'
+      '${dateTime.year.toString()} '
+      '${dateTime.hour.toString().padLeft(2, '0')}:'
+      '${dateTime.minute.toString().padLeft(2, '0')}';
 }

@@ -1,3 +1,4 @@
+import 'package:bysykkelen_stavanger/features/bookings_list/booking.dart';
 import 'package:bysykkelen_stavanger/models/models.dart';
 import 'package:bysykkelen_stavanger/repositories/bysykkelen_scraper.dart';
 import 'package:bysykkelen_stavanger/repositories/citibikes_api_client.dart';
@@ -29,4 +30,6 @@ class BikeRepository {
         bookingDateTime,
         minimumDateTime,
       );
+
+  Future<List<Booking>> fetchBookings() => _bysykkelenScraper.fetchBookings();
 }

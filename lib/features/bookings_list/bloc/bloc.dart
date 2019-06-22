@@ -6,10 +6,10 @@ import 'package:bysykkelen_stavanger/shared/login_prompt.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
-class BookBikeBloc extends Bloc<BookingsEvent, BookingsListState> {
+class BookingsBloc extends Bloc<BookingsEvent, BookingsListState> {
   final BikeRepository bikeRepository;
 
-  BookBikeBloc({@required this.bikeRepository})
+  BookingsBloc({@required this.bikeRepository})
       : assert(bikeRepository != null);
 
   @override
@@ -22,7 +22,7 @@ class BookBikeBloc extends Bloc<BookingsEvent, BookingsListState> {
 
       if (!await bikeRepository.loggedIn()) {
         final userNameAndPassword =
-        await promptForUsernameAndPassword(event.context);
+            await promptForUsernameAndPassword(event.context);
         if (userNameAndPassword == null) {
           yield BookingsError(message: 'Couldn\'t log in');
           return;
@@ -32,6 +32,14 @@ class BookBikeBloc extends Bloc<BookingsEvent, BookingsListState> {
           userNameAndPassword.userName,
           userNameAndPassword.password,
         );
+      }
+
+      final bookings = await bikeRepository.fetchBookings();
+
+      if (bookings != null) {
+        yield BookingsReady(bookings: bookings);
+      } else {
+        yield BookingsError(message: 'Failed to get bookings');
       }
     }
   }

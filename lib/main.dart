@@ -20,8 +20,6 @@ class SimpleBlocDelegate extends BlocDelegate {
 }
 
 void main() async {
-  Crashlytics.instance.enableInDevMode = true;
-
   // Pass all uncaught errors to Crashlytics.
   FlutterError.onError = (FlutterErrorDetails details) {
     Crashlytics.instance.onError(details);
