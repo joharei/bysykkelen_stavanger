@@ -35,4 +35,6 @@ class BikeRepository {
 
   Future<bool> deleteBooking(Booking booking) =>
       _bysykkelenScraper.deleteBooking(booking);
+
+  Future clearCookies() => _bysykkelenScraper.clearCookies();
 }

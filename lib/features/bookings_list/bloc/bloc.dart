@@ -42,12 +42,15 @@ class BookingsBloc extends Bloc<BookingsEvent, BookingsListState> {
       yield (currentState as BookingsReady).copyWith(refreshing: true);
     }
 
+    var clearCookies = false;
     if (!await bikeRepository.loggedIn()) {
       final userNameAndPassword = await promptForUsernameAndPassword(context);
       if (userNameAndPassword == null) {
         yield BookingsError(message: 'Couldn\'t log in');
         return;
       }
+
+      clearCookies = !userNameAndPassword.saveCredentials;
 
       await bikeRepository.login(
         userNameAndPassword.userName,
@@ -56,6 +59,10 @@ class BookingsBloc extends Bloc<BookingsEvent, BookingsListState> {
     }
 
     final bookings = await bikeRepository.fetchBookings();
+
+    if (clearCookies) {
+      await bikeRepository.clearCookies();
+    }
 
     if (bookings != null) {
       yield BookingsReady(bookings: bookings, refreshing: false);

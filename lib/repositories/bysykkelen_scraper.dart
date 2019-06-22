@@ -1,5 +1,6 @@
 import 'package:bysykkelen_stavanger/features/bookings_list/booking.dart';
 import 'package:bysykkelen_stavanger/models/models.dart';
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:meta/meta.dart';
@@ -148,6 +149,13 @@ class BysykkelenScraper {
     } catch (e) {
       return false;
     }
+  }
+
+  Future clearCookies() {
+    CookieManager manager = dio.interceptors
+        .firstWhere((interceptor) => interceptor is CookieManager);
+    return Future.sync(
+        () => (manager.cookieJar as PersistCookieJar).deleteAll());
   }
 
   /// Formats [dateTime] as 'DD/MM/YYYY HH:mm'

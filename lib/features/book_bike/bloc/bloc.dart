@@ -20,6 +20,7 @@ class BookBikeBloc extends Bloc<BookBikeEvent, BookBikeState> {
     if (event is BookBike) {
       yield BookingLoading();
 
+      var clearCookies = false;
       if (!await bikeRepository.loggedIn()) {
         final userNameAndPassword =
             await promptForUsernameAndPassword(event.context);
@@ -27,6 +28,8 @@ class BookBikeBloc extends Bloc<BookBikeEvent, BookBikeState> {
           yield BookingReady();
           return;
         }
+
+        clearCookies = !userNameAndPassword.saveCredentials;
 
         await bikeRepository.login(
           userNameAndPassword.userName,
@@ -41,6 +44,10 @@ class BookBikeBloc extends Bloc<BookBikeEvent, BookBikeState> {
         event.bookingDateTime,
         event.minimumDateTime,
       );
+
+      if (clearCookies) {
+        await bikeRepository.clearCookies();
+      }
 
       if (!bookingOk) {
         yield BookingError();

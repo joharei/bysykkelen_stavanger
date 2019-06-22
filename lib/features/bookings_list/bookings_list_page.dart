@@ -50,7 +50,7 @@ class _BookingsListPageState extends State<BookingsListPage> {
             }
             if (state.refreshing) {
               _refreshIndicator.currentState.show();
-            } else {
+            } else if (!_refreshCompleter.isCompleted) {
               _refreshCompleter.complete();
             }
           }
