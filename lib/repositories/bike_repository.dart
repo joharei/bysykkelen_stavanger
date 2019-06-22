@@ -32,4 +32,7 @@ class BikeRepository {
       );
 
   Future<List<Booking>> fetchBookings() => _bysykkelenScraper.fetchBookings();
+
+  Future<bool> deleteBooking(Booking booking) =>
+      _bysykkelenScraper.deleteBooking(booking);
 }

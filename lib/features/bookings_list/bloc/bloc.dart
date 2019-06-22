@@ -18,29 +18,45 @@ class BookingsBloc extends Bloc<BookingsEvent, BookingsListState> {
   @override
   Stream<BookingsListState> mapEventToState(BookingsEvent event) async* {
     if (event is FetchBookings) {
-      yield BookingsLoading();
-
-      if (!await bikeRepository.loggedIn()) {
-        final userNameAndPassword =
-            await promptForUsernameAndPassword(event.context);
-        if (userNameAndPassword == null) {
-          yield BookingsError(message: 'Couldn\'t log in');
-          return;
-        }
-
-        await bikeRepository.login(
-          userNameAndPassword.userName,
-          userNameAndPassword.password,
+      yield* _fetchBookings(event.context);
+    } else if (event is DeleteBooking) {
+      final deletedOk = await bikeRepository.deleteBooking(event.booking);
+      if (currentState is BookingsReady) {
+        yield (currentState as BookingsReady).copyWith(
+          message: deletedOk
+              ? 'Deleted your booking at ${event.booking.stationName}'
+              : 'Failed to delete booking',
         );
       }
-
-      final bookings = await bikeRepository.fetchBookings();
-
-      if (bookings != null) {
-        yield BookingsReady(bookings: bookings);
-      } else {
-        yield BookingsError(message: 'Failed to get bookings');
+      if (deletedOk) {
+        yield* _fetchBookings(event.context);
       }
+    }
+  }
+
+  Stream<BookingsListState> _fetchBookings(BuildContext context) async* {
+    yield BookingsLoading();
+
+    if (!await bikeRepository.loggedIn()) {
+      final userNameAndPassword =
+      await promptForUsernameAndPassword(context);
+      if (userNameAndPassword == null) {
+        yield BookingsError(message: 'Couldn\'t log in');
+        return;
+      }
+
+      await bikeRepository.login(
+        userNameAndPassword.userName,
+        userNameAndPassword.password,
+      );
+    }
+
+    final bookings = await bikeRepository.fetchBookings();
+
+    if (bookings != null) {
+      yield BookingsReady(bookings: bookings);
+    } else {
+      yield BookingsError(message: 'Failed to get bookings');
     }
   }
 }

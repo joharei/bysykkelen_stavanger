@@ -8,11 +8,22 @@ abstract class BookingsListState extends Equatable {
 
 class BookingsReady extends BookingsListState {
   final List<Booking> bookings;
+  final String message;
 
   BookingsReady({
     @required this.bookings,
+    this.message,
   })  : assert(bookings != null),
-        super([bookings]);
+        super([bookings, message]);
+
+  BookingsReady copyWith({
+    List<Booking> bookings,
+    String message,
+  }) =>
+      BookingsReady(
+        bookings: bookings ?? this.bookings,
+        message: message,
+      );
 }
 
 class BookingsLoading extends BookingsListState {}

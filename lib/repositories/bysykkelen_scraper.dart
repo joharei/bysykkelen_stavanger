@@ -114,17 +114,39 @@ class BysykkelenScraper {
           bookingsDocument.querySelectorAll('table tr[data-reservation-id]');
       final bookings = bookingElements.map((element) {
         return Booking(
-            stationName: element.children[2].text,
-            time: element.children[1].text,
-            id: element.attributes['data-reservation-id'],
-            requestVerificationToken: element
-                .querySelector('input[name=__RequestVerificationToken]')
-                .attributes['value'],
-          );
+          stationName: element.children[2].text,
+          time: element.children[1].text,
+          id: element.attributes['data-reservation-id'],
+          requestVerificationToken: element
+              .querySelector('input[name=__RequestVerificationToken]')
+              .attributes['value'],
+        );
       });
       return bookings.toList();
     } catch (e) {
       return null;
+    }
+  }
+
+  Future<bool> deleteBooking(Booking booking) async {
+    dio.options = BaseOptions(
+      baseUrl: _baseUrl,
+      responseType: ResponseType.plain,
+      validateStatus: (status) => status == 200 || status == 302,
+    );
+
+    try {
+      await dio.post(
+        '/reservations/delete',
+        data: FormData.from({
+          '__RequestVerificationToken': booking.requestVerificationToken,
+          'id': booking.id,
+          'returnUrl': '',
+        }),
+      );
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 
