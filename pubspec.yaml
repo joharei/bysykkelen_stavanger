@@ -20,6 +20,7 @@ dependencies:
   google_maps_flutter: ^0.5.15
   firebase_crashlytics: ^0.0.4+4
   provider: ^3.0.0+1
+  url_launcher: ^5.0.3
 
 dev_dependencies:
   flutter_test:

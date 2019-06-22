@@ -1,4 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UsernameAndPassword {
   final String userName;
@@ -33,6 +35,11 @@ class _PromptForUserNameAndPasswordState
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData themeData = Theme.of(context);
+    final TextStyle infoTextStyle = themeData.textTheme.body2;
+    final TextStyle linkStyle =
+        themeData.textTheme.body2.copyWith(color: themeData.accentColor);
+
     return AlertDialog(
       title: Text('Log in'),
       content: Column(
@@ -62,9 +69,27 @@ class _PromptForUserNameAndPasswordState
                   saveCredentials = value;
                 }),
           ),
+          Padding(padding: EdgeInsets.only(top: 8)),
+          RichText(
+            text: TextSpan(children: [
+              TextSpan(
+                style: infoTextStyle,
+                text: 'Don\'t have a user? Create one at ',
+              ),
+              _LinkTextSpan(
+                style: linkStyle,
+                text: 'bysykkelen.no',
+                url: 'https://my.bysykkelen.no/nb/account/register',
+              ),
+              TextSpan(
+                style: infoTextStyle,
+                text: '.',
+              )
+            ]),
+          ),
         ],
       ),
-      actions: <Widget>[
+      actions: [
         FlatButton(
           child: Text('Ok'),
           onPressed: () {
@@ -78,4 +103,19 @@ class _PromptForUserNameAndPasswordState
       ],
     );
   }
+}
+
+class _LinkTextSpan extends TextSpan {
+  _LinkTextSpan({
+    TextStyle style,
+    @required String url,
+    String text,
+  }) : super(
+          style: style,
+          text: text ?? url,
+          recognizer: TapGestureRecognizer()
+            ..onTap = () {
+              launch(url, forceSafariVC: false);
+            },
+        );
 }
