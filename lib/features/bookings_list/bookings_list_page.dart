@@ -69,6 +69,13 @@ class _BookingsListPageState extends State<BookingsListPage> {
               ),
               if (state is BookingsLoading)
                 Center(child: CircularProgressIndicator()),
+              if (state is BookingsError)
+                Center(
+                  child: Text(
+                    state.message,
+                    style: Theme.of(context).textTheme.subhead,
+                  ),
+                )
             ],
           );
         },
