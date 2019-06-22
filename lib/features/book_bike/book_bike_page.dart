@@ -4,6 +4,7 @@ import 'package:bysykkelen_stavanger/features/book_bike/bloc/state.dart';
 import 'package:bysykkelen_stavanger/features/book_bike/progress_button.dart';
 import 'package:bysykkelen_stavanger/models/models.dart';
 import 'package:bysykkelen_stavanger/repositories/bike_repository.dart';
+import 'package:bysykkelen_stavanger/shared/safe_area_insets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -139,9 +140,7 @@ class _BookBikePageState extends State<BookBikePage> {
               left: 32,
               right: 32,
               top: 32,
-              bottom: MediaQuery.of(context).padding.bottom +
-                  MediaQuery.of(context).viewInsets.bottom +
-                  8,
+              bottom: safeAreaBottomInset(context) + 8,
             ),
             children: [
               Text('Book bike', style: Theme.of(context).textTheme.headline),
@@ -167,10 +166,10 @@ class _BookBikePageState extends State<BookBikePage> {
                               ? ProgressState.done
                               : ProgressState.idle,
                   onPressed: () => _addBookingButtonPressed(
-                    context,
-                    minimumDateTime,
-                    maximumDateTime,
-                  ),
+                        context,
+                        minimumDateTime,
+                        maximumDateTime,
+                      ),
                 ),
               ),
             ],

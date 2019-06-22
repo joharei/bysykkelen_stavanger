@@ -13,7 +13,10 @@ class BookingsBloc extends Bloc<BookingsEvent, BookingsListState> {
       : assert(bikeRepository != null);
 
   @override
-  BookingsListState get initialState => BookingsLoading();
+  BookingsListState get initialState => BookingsReady(
+        bookings: [],
+        refreshing: true,
+      );
 
   @override
   Stream<BookingsListState> mapEventToState(BookingsEvent event) async* {
@@ -35,11 +38,12 @@ class BookingsBloc extends Bloc<BookingsEvent, BookingsListState> {
   }
 
   Stream<BookingsListState> _fetchBookings(BuildContext context) async* {
-    yield BookingsLoading();
+    if (currentState is BookingsReady) {
+      yield (currentState as BookingsReady).copyWith(refreshing: true);
+    }
 
     if (!await bikeRepository.loggedIn()) {
-      final userNameAndPassword =
-      await promptForUsernameAndPassword(context);
+      final userNameAndPassword = await promptForUsernameAndPassword(context);
       if (userNameAndPassword == null) {
         yield BookingsError(message: 'Couldn\'t log in');
         return;
@@ -54,7 +58,7 @@ class BookingsBloc extends Bloc<BookingsEvent, BookingsListState> {
     final bookings = await bikeRepository.fetchBookings();
 
     if (bookings != null) {
-      yield BookingsReady(bookings: bookings);
+      yield BookingsReady(bookings: bookings, refreshing: false);
     } else {
       yield BookingsError(message: 'Failed to get bookings');
     }

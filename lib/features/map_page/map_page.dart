@@ -4,6 +4,7 @@ import 'package:bysykkelen_stavanger/features/map_page/bloc/event.dart';
 import 'package:bysykkelen_stavanger/features/map_page/bloc/state.dart';
 import 'package:bysykkelen_stavanger/features/map_page/carousel.dart';
 import 'package:bysykkelen_stavanger/repositories/repositories.dart';
+import 'package:bysykkelen_stavanger/shared/safe_area_insets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -67,9 +68,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
             ),
             Container(
               alignment: Alignment.bottomCenter,
-              margin: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).padding.bottom +
-                      MediaQuery.of(context).viewInsets.bottom),
+              margin: EdgeInsets.only(bottom: safeAreaBottomInset(context)),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,

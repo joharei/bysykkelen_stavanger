@@ -9,24 +9,27 @@ abstract class BookingsListState extends Equatable {
 class BookingsReady extends BookingsListState {
   final List<Booking> bookings;
   final String message;
+  final bool refreshing;
 
   BookingsReady({
     @required this.bookings,
+    @required this.refreshing,
     this.message,
   })  : assert(bookings != null),
-        super([bookings, message]);
+        assert(refreshing != null),
+        super([bookings, refreshing, message]);
 
   BookingsReady copyWith({
     List<Booking> bookings,
+    bool refreshing,
     String message,
   }) =>
       BookingsReady(
         bookings: bookings ?? this.bookings,
+        refreshing: refreshing ?? this.refreshing,
         message: message,
       );
 }
-
-class BookingsLoading extends BookingsListState {}
 
 class BookingsError extends BookingsListState {
   final String message;
