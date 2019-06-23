@@ -74,4 +74,6 @@
 android/key.jks
 android/key.properties
 android/app/google-services.json
+ios/Runner/AppDelegate.m
+ios/Runner/GoogleService-Info.plist
 graphics/
