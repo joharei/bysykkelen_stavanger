@@ -66,6 +66,8 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
               mapType: MapType.normal,
               initialCameraPosition: MapPage._stavanger,
               markers: _generateMarkers(state),
+              myLocationButtonEnabled: false,
+              myLocationEnabled: false,
             ),
             Container(
               alignment: Alignment.bottomCenter,
