@@ -61,6 +61,7 @@ class _PromptForUserNameAndPasswordState
                 InputDecoration(labelText: localization.password),
             autocorrect: false,
             obscureText: true,
+            keyboardType: TextInputType.number,
             onChanged: (value) {
               password = value;
             },
