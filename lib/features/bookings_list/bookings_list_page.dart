@@ -64,6 +64,7 @@ class _BookingsListPageState extends State<BookingsListPage> {
                 children: [
                   RefreshIndicator(
                     key: _refreshIndicator,
+                    displacement: 60,
                     onRefresh: () {
                       if (state is BookingsReady && !state.refreshing) {
                         _bloc.dispatch(FetchBookings(context: context));
