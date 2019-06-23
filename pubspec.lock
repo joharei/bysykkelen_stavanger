@@ -77,7 +77,7 @@ packages:
       name: firebase_crashlytics
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.0.4+4"
+    version: "0.0.4+8"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -106,7 +106,7 @@ packages:
       name: google_maps_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.16"
+    version: "0.5.19"
   html:
     dependency: "direct main"
     description:
