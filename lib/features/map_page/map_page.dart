@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bysykkelen_stavanger/features/bookings_list/bookings_list_page.dart';
 import 'package:bysykkelen_stavanger/features/map_page/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/map_page/bloc/event.dart';
@@ -66,6 +68,9 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
               mapType: MapType.normal,
               initialCameraPosition: MapPage._stavanger,
               markers: _generateMarkers(state),
+              padding: EdgeInsets.only(
+                  bottom: safeAreaBottomInset(context) +
+                      (Platform.isAndroid ? 165 : 135)),
               myLocationButtonEnabled: false,
               myLocationEnabled: false,
             ),
