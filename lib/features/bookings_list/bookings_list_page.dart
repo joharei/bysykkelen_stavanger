@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bysykkelen_stavanger/features/bookings_list/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/bookings_list/bloc/event.dart';
 import 'package:bysykkelen_stavanger/repositories/bike_repository.dart';
+import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -73,7 +74,7 @@ class _BookingsListPageState extends State<BookingsListPage> {
                     child: CustomScrollView(
                       slivers: [
                         SliverAppBar(
-                          title: Text('Bookings'),
+                          title: Text(Localization.of(context).bookings),
                           floating: true,
                           pinned: true,
                         ),
@@ -121,7 +122,7 @@ class _BookingsListPageState extends State<BookingsListPage> {
                       padding: EdgeInsets.all(16),
                       alignment: Alignment.center,
                       child: Text(
-                        'You don\'t have any bookings yet! Go back and press the "Book bike" button to make a booking.',
+                        Localization.of(context).noBookingsInfo,
                         style: Theme.of(context).textTheme.subhead,
                       ),
                     ),

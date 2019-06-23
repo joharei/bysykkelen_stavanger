@@ -1,3 +1,4 @@
+import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -39,22 +40,25 @@ class _PromptForUserNameAndPasswordState
     final TextStyle infoTextStyle = themeData.textTheme.body2;
     final TextStyle linkStyle =
         themeData.textTheme.body2.copyWith(color: themeData.accentColor);
+    final localization = Localization.of(context);
 
     return AlertDialog(
-      title: Text('Log in'),
+      title: Text(localization.logIn),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           TextField(
             autofocus: true,
-            decoration: InputDecoration(labelText: 'User name'),
+            decoration:
+                InputDecoration(labelText: localization.userName),
             autocorrect: false,
             onChanged: (value) {
               userName = value;
             },
           ),
           TextField(
-            decoration: InputDecoration(labelText: 'Password'),
+            decoration:
+                InputDecoration(labelText: localization.password),
             autocorrect: false,
             obscureText: true,
             onChanged: (value) {
@@ -62,7 +66,7 @@ class _PromptForUserNameAndPasswordState
             },
           ),
           CheckboxListTile(
-            title: Text('Remember?'),
+            title: Text(localization.remember),
             controlAffinity: ListTileControlAffinity.leading,
             value: saveCredentials,
             onChanged: (value) => setState(() {
@@ -74,7 +78,7 @@ class _PromptForUserNameAndPasswordState
             text: TextSpan(children: [
               TextSpan(
                 style: infoTextStyle,
-                text: 'Don\'t have a user? Create one at ',
+                text: localization.createUserInfo,
               ),
               _LinkTextSpan(
                 style: linkStyle,
@@ -91,7 +95,7 @@ class _PromptForUserNameAndPasswordState
       ),
       actions: [
         FlatButton(
-          child: Text('Ok'),
+          child: Text(localization.ok),
           onPressed: () {
             Navigator.of(context).pop(UsernameAndPassword(
               userName,

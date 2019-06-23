@@ -4,6 +4,7 @@ import 'package:bysykkelen_stavanger/features/map_page/bloc/event.dart';
 import 'package:bysykkelen_stavanger/features/map_page/bloc/state.dart';
 import 'package:bysykkelen_stavanger/features/map_page/carousel.dart';
 import 'package:bysykkelen_stavanger/repositories/repositories.dart';
+import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
 import 'package:bysykkelen_stavanger/shared/safe_area_insets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -81,7 +82,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
                     child: FloatingActionButton(
                       onPressed: () => BookingsListPage.show(context),
                       child: Icon(Icons.view_list),
-                      tooltip: 'Bookings',
+                      tooltip: Localization.of(context).bookings,
                     ),
                   ),
                   BlocProvider(

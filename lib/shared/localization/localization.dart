@@ -6,6 +6,44 @@ import 'package:flutter/material.dart';
 abstract class Localization {
   static Localization of(BuildContext context) =>
       Localizations.of<Localization>(context, Localization);
+
+  String get bookings;
+
+  String get bookBike;
+
+  String availableBikes(int availableBikes);
+
+  String get invalidTimeTitle;
+
+  String get invalidTimeContent;
+
+  String get bookingErrorTitle;
+
+  String get bookingErrorContent;
+
+  String get addBooking;
+
+  String get ok => 'Ok';
+
+  String get logIn;
+
+  String get userName;
+
+  String get password;
+
+  String get remember;
+
+  String get createUserInfo;
+
+  String get noBookingsInfo;
+
+  String deletedBooking(String stationName);
+
+  String get deleteFailed;
+
+  String get loginFailed;
+
+  String get bookingsFailed;
 }
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<Localization> {

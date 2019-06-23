@@ -4,6 +4,7 @@ import 'package:bysykkelen_stavanger/features/book_bike/bloc/state.dart';
 import 'package:bysykkelen_stavanger/features/book_bike/progress_button.dart';
 import 'package:bysykkelen_stavanger/models/models.dart';
 import 'package:bysykkelen_stavanger/repositories/bike_repository.dart';
+import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
 import 'package:bysykkelen_stavanger/shared/safe_area_insets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -74,13 +75,11 @@ class _BookBikePageState extends State<BookBikePage> {
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: Text('Invalid time'),
-              content: Text(
-                'You must choose a value between now and 10 days from now.',
-              ),
+              title: Text(Localization.of(context).invalidTimeTitle),
+              content: Text(Localization.of(context).invalidTimeContent),
               actions: <Widget>[
                 FlatButton(
-                  child: Text('Ok'),
+                  child: Text(Localization.of(context).ok),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -104,11 +103,11 @@ class _BookBikePageState extends State<BookBikePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Error'),
-          content: Text('Something went wrong while booking the bike 😲'),
+          title: Text(Localization.of(context).bookingErrorTitle),
+          content: Text(Localization.of(context).bookingErrorContent),
           actions: <Widget>[
             FlatButton(
-              child: Text('Ok'),
+              child: Text(Localization.of(context).ok),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -129,60 +128,62 @@ class _BookBikePageState extends State<BookBikePage> {
       maxChildSize: 0.5,
       builder: (context, scrollController) {
         return BlocListener(
-        bloc: _bookBikeBloc,
-        listener: (context, state) {
-          if (state is CloseBookingPage) {
-            Navigator.of(context).pop();
-          } else if (state is BookingError) {
-            _showErrorDialog(context);
-          }
-        },
-        child: BlocBuilder(
           bloc: _bookBikeBloc,
-          builder: (context, state) {
-            return ListView(
-              controller: scrollController,
-              padding: EdgeInsets.only(
-                left: 32,
-                right: 32,
-                top: 32,
-                bottom: safeAreaBottomInset(context) + 8,
-              ),
-              children: [
-                Text('Book bike', style: Theme.of(context).textTheme.headline),
-                Container(
-                  height: MediaQuery.of(context).size.height / 4,
-                  child: CupertinoDatePicker(
-                    onDateTimeChanged: (date) => _chosenDate = date,
-                    use24hFormat: MediaQuery.of(context).alwaysUse24HourFormat,
-                    initialDateTime: _getInitialDateTime(),
-                    minimumDate: minimumDateTime.subtract(Duration(days: 1)),
-                    maximumDate: maximumDateTime,
-                    minuteInterval: 5,
-                  ),
-                ),
-                Center(
-                  child: ProgressButton(
-                    text: 'Add booking',
-                    state: state is BookingLoading
-                        ? ProgressState.loading
-                        : state is BookingDone
-                            ? ProgressState.done
-                            : state is CloseBookingPage
-                                ? ProgressState.done
-                                : ProgressState.idle,
-                    onPressed: () => _addBookingButtonPressed(
-                          context,
-                          minimumDateTime,
-                          maximumDateTime,
-                        ),
-                  ),
-                ),
-              ],
-            );
+          listener: (context, state) {
+            if (state is CloseBookingPage) {
+              Navigator.of(context).pop();
+            } else if (state is BookingError) {
+              _showErrorDialog(context);
+            }
           },
-        ),
-      );
+          child: BlocBuilder(
+            bloc: _bookBikeBloc,
+            builder: (context, state) {
+              return ListView(
+                controller: scrollController,
+                padding: EdgeInsets.only(
+                  left: 32,
+                  right: 32,
+                  top: 32,
+                  bottom: safeAreaBottomInset(context) + 8,
+                ),
+                children: [
+                  Text(Localization.of(context).bookBike,
+                      style: Theme.of(context).textTheme.headline),
+                  Container(
+                    height: MediaQuery.of(context).size.height / 4,
+                    child: CupertinoDatePicker(
+                      onDateTimeChanged: (date) => _chosenDate = date,
+                      use24hFormat:
+                          MediaQuery.of(context).alwaysUse24HourFormat,
+                      initialDateTime: _getInitialDateTime(),
+                      minimumDate: minimumDateTime.subtract(Duration(days: 1)),
+                      maximumDate: maximumDateTime,
+                      minuteInterval: 5,
+                    ),
+                  ),
+                  Center(
+                    child: ProgressButton(
+                      text: Localization.of(context).addBooking,
+                      state: state is BookingLoading
+                          ? ProgressState.loading
+                          : state is BookingDone
+                              ? ProgressState.done
+                              : state is CloseBookingPage
+                                  ? ProgressState.done
+                                  : ProgressState.idle,
+                      onPressed: () => _addBookingButtonPressed(
+                            context,
+                            minimumDateTime,
+                            maximumDateTime,
+                          ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
       },
     );
   }

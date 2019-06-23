@@ -62,7 +62,7 @@ class App extends StatelessWidget {
       ],
       supportedLocales: [
         const Locale('en', ''),
-        const Locale.fromSubtags(countryCode: 'NO'),
+        const Locale('nb', ''),
       ],
       home: MapPage(bikeRepository: Provider.of<BikeRepository>(context)),
     );

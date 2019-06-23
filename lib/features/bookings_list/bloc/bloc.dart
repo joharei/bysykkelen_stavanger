@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/bookings_list/bloc/event.dart';
 import 'package:bysykkelen_stavanger/features/bookings_list/bloc/state.dart';
 import 'package:bysykkelen_stavanger/repositories/repositories.dart';
+import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
 import 'package:bysykkelen_stavanger/shared/login_prompt.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
@@ -27,8 +28,9 @@ class BookingsBloc extends Bloc<BookingsEvent, BookingsListState> {
       if (currentState is BookingsReady) {
         yield (currentState as BookingsReady).copyWith(
           message: deletedOk
-              ? 'Deleted your booking at ${event.booking.stationName}'
-              : 'Failed to delete booking',
+              ? Localization.of(event.context)
+                  .deletedBooking(event.booking.stationName)
+              : Localization.of(event.context).deleteFailed,
         );
       }
       if (deletedOk) {
@@ -46,7 +48,7 @@ class BookingsBloc extends Bloc<BookingsEvent, BookingsListState> {
     if (!await bikeRepository.loggedIn()) {
       final userNameAndPassword = await promptForUsernameAndPassword(context);
       if (userNameAndPassword == null) {
-        yield BookingsError(message: 'Couldn\'t log in');
+        yield BookingsError(message: Localization.of(context).loginFailed);
         return;
       }
 
@@ -67,7 +69,7 @@ class BookingsBloc extends Bloc<BookingsEvent, BookingsListState> {
     if (bookings != null) {
       yield BookingsReady(bookings: bookings, refreshing: false);
     } else {
-      yield BookingsError(message: 'Failed to get bookings');
+      yield BookingsError(message: Localization.of(context).bookingsFailed);
     }
   }
 }
