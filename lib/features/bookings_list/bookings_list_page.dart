@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:bysykkelen_stavanger/features/bookings_list/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/bookings_list/bloc/event.dart';
 import 'package:bysykkelen_stavanger/repositories/bike_repository.dart';
 import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -49,9 +51,10 @@ class _BookingsListPageState extends State<BookingsListPage> {
                 content: Text(state.message),
               ));
             }
-            if (state.refreshing) {
+            if (state.refreshing && _refreshIndicator.currentState != null) {
               _refreshIndicator.currentState.show();
-            } else if (!_refreshCompleter.isCompleted) {
+            } else if (_refreshCompleter != null &&
+                !_refreshCompleter.isCompleted) {
               _refreshCompleter.complete();
             }
           }
@@ -62,53 +65,14 @@ class _BookingsListPageState extends State<BookingsListPage> {
             return SafeArea(
               child: Stack(
                 children: [
-                  RefreshIndicator(
-                    key: _refreshIndicator,
-                    displacement: 60,
-                    onRefresh: () {
-                      if (state is BookingsReady && !state.refreshing) {
-                        _bloc.dispatch(FetchBookings(context: context));
-                      }
-                      _refreshCompleter = Completer();
-                      return _refreshCompleter.future;
-                    },
-                    child: CustomScrollView(
-                      slivers: [
-                        SliverAppBar(
-                          title: Text(Localization.of(context).bookings),
-                          floating: true,
-                          pinned: true,
-                        ),
-                        if (state is BookingsReady)
-                          SliverFixedExtentList(
-                            itemExtent: 75,
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) {
-                                final booking = state.bookings[index];
-                                return ListTile(
-                                  title: Text(booking.stationName),
-                                  subtitle: Text(booking.time),
-                                  trailing: IconButton(
-                                    icon: Icon(Icons.delete, color: Colors.red),
-                                    onPressed: () {
-                                      return {
-                                        _bloc.dispatch(
-                                          DeleteBooking(
-                                            context: context,
-                                            booking: booking,
-                                          ),
-                                        )
-                                      };
-                                    },
-                                  ),
-                                );
-                              },
-                              childCount: state.bookings.length,
-                            ),
-                          ),
-                      ],
+                  if (Platform.isAndroid)
+                    RefreshIndicator(
+                      key: _refreshIndicator,
+                      displacement: 60,
+                      onRefresh: () => _onRefresh(state, context),
+                      child: _buildCustomScrollView(context, state),
                     ),
-                  ),
+                  if (Platform.isIOS) _buildCustomScrollView(context, state),
                   if (state is BookingsError)
                     Center(
                       child: Text(
@@ -133,6 +97,57 @@ class _BookingsListPageState extends State<BookingsListPage> {
           },
         ),
       ),
+    );
+  }
+
+  Future<void> _onRefresh(state, BuildContext context) {
+    if (state is BookingsReady && !state.refreshing) {
+      _bloc.dispatch(FetchBookings(context: context));
+    }
+    _refreshCompleter = Completer();
+    return _refreshCompleter.future;
+  }
+
+  CustomScrollView _buildCustomScrollView(BuildContext context, state) {
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar(
+          title: Text(Localization.of(context).bookings),
+          floating: true,
+          pinned: true,
+        ),
+        if (Platform.isIOS)
+          CupertinoSliverRefreshControl(
+            onRefresh: () => _onRefresh(state, context),
+          ),
+        if (state is BookingsReady)
+          SliverFixedExtentList(
+            itemExtent: 75,
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                final booking = state.bookings[index];
+                return ListTile(
+                  title: Text(booking.stationName),
+                  subtitle: Text(booking.time),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red),
+                    onPressed: () {
+                      return {
+                        _bloc.dispatch(
+                          DeleteBooking(
+                            context: context,
+                            booking: booking,
+                          ),
+                        )
+                      };
+                    },
+                  ),
+                );
+              },
+              childCount: state.bookings.length,
+            ),
+          ),
+      ],
     );
   }
 }

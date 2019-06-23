@@ -27,7 +27,9 @@ class _ProgressButtonState extends State<ProgressButton>
   @override
   void dispose() {
     super.dispose();
-    _controller.dispose();
+    if (_controller != null) {
+      _controller.dispose();
+    }
   }
 
   @override
