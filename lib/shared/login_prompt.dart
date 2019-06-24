@@ -44,55 +44,58 @@ class _PromptForUserNameAndPasswordState
 
     return AlertDialog(
       title: Text(localization.logIn),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          TextField(
-            autofocus: true,
-            decoration:
-                InputDecoration(labelText: localization.userName),
-            autocorrect: false,
-            onChanged: (value) {
-              userName = value;
-            },
-          ),
-          TextField(
-            decoration:
-                InputDecoration(labelText: localization.password),
-            autocorrect: false,
-            obscureText: true,
-            keyboardType: TextInputType.number,
-            onChanged: (value) {
-              password = value;
-            },
-          ),
-          CheckboxListTile(
-            title: Text(localization.remember),
-            controlAffinity: ListTileControlAffinity.leading,
-            value: saveCredentials,
-            onChanged: (value) => setState(() {
-                  saveCredentials = value;
-                }),
-          ),
-          Padding(padding: EdgeInsets.only(top: 8)),
-          RichText(
-            text: TextSpan(children: [
-              TextSpan(
-                style: infoTextStyle,
-                text: localization.createUserInfo,
+      content: Container(
+        height: 220,
+        width: MediaQuery.of(context).size.width * 0.95,
+        child: Scrollbar(
+          child: ListView(
+            children: <Widget>[
+              TextField(
+                autofocus: true,
+                decoration: InputDecoration(labelText: localization.userName),
+                autocorrect: false,
+                onChanged: (value) {
+                  userName = value;
+                },
               ),
-              _LinkTextSpan(
-                style: linkStyle,
-                text: 'bysykkelen.no',
-                url: 'https://my.bysykkelen.no/nb/account/register',
+              TextField(
+                decoration: InputDecoration(labelText: localization.password),
+                autocorrect: false,
+                obscureText: true,
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  password = value;
+                },
               ),
-              TextSpan(
-                style: infoTextStyle,
-                text: '.',
-              )
-            ]),
+              CheckboxListTile(
+                title: Text(localization.remember),
+                controlAffinity: ListTileControlAffinity.leading,
+                value: saveCredentials,
+                onChanged: (value) => setState(() {
+                      saveCredentials = value;
+                    }),
+              ),
+              Padding(padding: EdgeInsets.only(top: 8)),
+              RichText(
+                text: TextSpan(children: [
+                  TextSpan(
+                    style: infoTextStyle,
+                    text: localization.createUserInfo,
+                  ),
+                  _LinkTextSpan(
+                    style: linkStyle,
+                    text: 'bysykkelen.no',
+                    url: 'https://my.bysykkelen.no/nb/account/register',
+                  ),
+                  TextSpan(
+                    style: infoTextStyle,
+                    text: '.',
+                  )
+                ]),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
       actions: [
         FlatButton(
