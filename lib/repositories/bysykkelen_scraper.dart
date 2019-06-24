@@ -104,23 +104,36 @@ class BysykkelenScraper {
       validateStatus: (status) => status == 200,
     );
 
+    final bookings =
+        await _fetchBookingsUrl('/bookings/indextable', 'data-booking-id');
+    final reservations = await _fetchBookingsUrl(
+        '/reservations/indextable', 'data-reservation-id');
+
+    if (bookings == null && reservations == null) {
+      return null;
+    }
+
+    return (bookings ?? [])..addAll(reservations ?? []);
+  }
+
+  Future<List<Booking>> _fetchBookingsUrl(String url, String idName) async {
     try {
-      final bookingsResponse =
-          await dio.get('/reservations/indextable', queryParameters: {
+      final bookingsResponse = await dio.get(url, queryParameters: {
         'NoHeader': 'False',
         'Page': 0,
       });
       final bookingsDocument = parser.parse(bookingsResponse.data.toString());
       final bookingElements =
-          bookingsDocument.querySelectorAll('table tr[data-reservation-id]');
+          bookingsDocument.querySelectorAll('table tr[$idName]');
       final bookings = bookingElements.map((element) {
         return Booking(
           stationName: element.children[2].text,
           time: element.children[1].text,
-          id: element.attributes['data-reservation-id'],
+          id: element.attributes[idName],
           requestVerificationToken: element
               .querySelector('input[name=__RequestVerificationToken]')
               .attributes['value'],
+          deleteUrl: element.querySelector('form').attributes['action'],
         );
       });
       return bookings.toList();
@@ -131,14 +144,14 @@ class BysykkelenScraper {
 
   Future<bool> deleteBooking(Booking booking) async {
     dio.options = BaseOptions(
-      baseUrl: _baseUrl,
+      baseUrl: 'https://my.bysykkelen.no',
       responseType: ResponseType.plain,
       validateStatus: (status) => status == 200 || status == 302,
     );
 
     try {
       await dio.post(
-        '/reservations/delete',
+        booking.deleteUrl,
         data: FormData.from({
           '__RequestVerificationToken': booking.requestVerificationToken,
           'id': booking.id,
