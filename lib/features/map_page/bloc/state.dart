@@ -15,12 +15,38 @@ class BikesLoaded extends BikesState {
   final Map<String, Station> stations;
   final Map<String, Marker> markers;
   final String selectedMarkerId;
+  final LatLng userLocation;
+  final bool hasPermission;
 
   BikesLoaded({
     @required this.stations,
     @required this.markers,
-    @required this.selectedMarkerId,
+    this.selectedMarkerId,
+    this.userLocation,
+    this.hasPermission = false,
   })  : assert(stations != null),
         assert(markers != null),
-        super([stations, markers, selectedMarkerId]);
+        super([
+          stations,
+          markers,
+          selectedMarkerId,
+          userLocation,
+          hasPermission,
+        ]);
+
+  BikesLoaded copyWith({
+    Map<String, Station> stations,
+    Map<String, Marker> markers,
+    String selectedMarkerId,
+    LatLng userLocation,
+    bool hasPermission,
+  }) =>
+      BikesLoaded(
+        stations: stations ?? this.stations,
+        markers: markers ?? this.markers,
+        selectedMarkerId: selectedMarkerId ?? this.selectedMarkerId,
+        // One-off
+        userLocation: userLocation,
+        hasPermission: hasPermission ?? this.hasPermission,
+      );
 }

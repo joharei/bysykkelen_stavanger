@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:bysykkelen_stavanger/features/bookings_list/bookings_list_page.dart';
@@ -31,13 +32,14 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   BikeStationsBloc _bikeStationsBloc;
+  Completer<GoogleMapController> _mapController = Completer();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _bikeStationsBloc = BikeStationsBloc(bikeRepository: widget.bikeRepository);
-    _bikeStationsBloc.dispatch(StartPollingStations());
+    _bikeStationsBloc.dispatch(StartPollingStations(initialState: true));
   }
 
   @override
@@ -59,49 +61,62 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder(
+    return BlocListener(
       bloc: _bikeStationsBloc,
-      builder: (context, BikesState state) {
-        return Stack(
-          children: [
-            GoogleMap(
-              mapType: MapType.normal,
-              initialCameraPosition: MapPage._stavanger,
-              markers: _generateMarkers(state),
-              padding: EdgeInsets.only(
-                  bottom: safeAreaBottomInset(context) +
-                      (Platform.isAndroid ? 165 : 135)),
-              myLocationButtonEnabled: false,
-              myLocationEnabled: false,
-            ),
-            Container(
-              alignment: Alignment.bottomCenter,
-              margin: EdgeInsets.only(bottom: safeAreaBottomInset(context)),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(
-                      bottom: 16,
-                      right: MediaQuery.of(context).size.width * 0.05 + 6,
-                    ),
-                    child: FloatingActionButton(
-                      onPressed: () => BookingsListPage.show(context),
-                      child: Icon(Icons.view_list),
-                      tooltip: Localization.of(context).bookings,
-                    ),
-                  ),
-                  BlocProvider(
-                    bloc: _bikeStationsBloc,
-                    child: BikeCarousel(),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
+      listener: (context, state) async {
+        if (state is BikesLoaded && state.userLocation != null) {
+          final controller = await _mapController.future;
+          controller.animateCamera(
+              CameraUpdate.newLatLngZoom(state.userLocation, 14));
+        }
       },
+      child: BlocBuilder(
+        bloc: _bikeStationsBloc,
+        builder: (context, BikesState state) {
+          return Stack(
+            children: [
+              GoogleMap(
+                mapType: MapType.normal,
+                initialCameraPosition: MapPage._stavanger,
+                markers: _generateMarkers(state),
+                padding: EdgeInsets.only(
+                    bottom: safeAreaBottomInset(context) +
+                        (Platform.isAndroid ? 165 : 135)),
+                myLocationButtonEnabled: false,
+                myLocationEnabled: state is BikesLoaded && state.hasPermission,
+                onMapCreated: (controller) {
+                  _mapController.complete(controller);
+                },
+              ),
+              Container(
+                alignment: Alignment.bottomCenter,
+                margin: EdgeInsets.only(bottom: safeAreaBottomInset(context)),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(
+                        bottom: 16,
+                        right: MediaQuery.of(context).size.width * 0.05 + 6,
+                      ),
+                      child: FloatingActionButton(
+                        onPressed: () => BookingsListPage.show(context),
+                        child: Icon(Icons.view_list),
+                        tooltip: Localization.of(context).bookings,
+                      ),
+                    ),
+                    BlocProvider(
+                      bloc: _bikeStationsBloc,
+                      child: BikeCarousel(),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 
