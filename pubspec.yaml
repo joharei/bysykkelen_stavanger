@@ -23,7 +23,7 @@ dependencies:
   firebase_crashlytics: ^0.0.4+8
   provider: ^3.0.0+1
   url_launcher: ^5.0.3
-  location: ^2.3.5
+  geolocator: ^5.0.1
 
 dev_dependencies:
   flutter_test:

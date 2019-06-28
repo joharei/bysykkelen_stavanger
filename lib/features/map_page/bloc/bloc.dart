@@ -8,21 +8,23 @@ import 'package:bysykkelen_stavanger/features/map_page/png_generator.dart';
 import 'package:bysykkelen_stavanger/models/models.dart';
 import 'package:bysykkelen_stavanger/repositories/repositories.dart';
 import 'package:flutter/foundation.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
+import 'package:location_permissions/location_permissions.dart';
 import 'package:meta/meta.dart';
 
 class BikeStationsBloc extends Bloc<BikesEvent, BikesState> {
   final BikeRepository bikeRepository;
   Timer _pollingTimer;
-  Location _locationService = Location();
+  Geolocator _locationService = Geolocator();
 
   BikeStationsBloc({@required this.bikeRepository})
       : assert(bikeRepository != null);
 
   @override
   BikesState get initialState => BikesLoaded(
-        stations: {},
+        stations: [],
+        idToStation: {},
         markers: {},
         selectedMarkerId: null,
       );
@@ -37,17 +39,24 @@ class BikeStationsBloc extends Bloc<BikesEvent, BikesState> {
 
   @override
   Stream<BikesState> mapEventToState(BikesEvent event) async* {
+    final state = currentState;
+
     if (event is StartPollingStations) {
       _mapStartPollingToState(event);
     } else if (event is FetchBikeStations) {
       yield* _mapFetchBikeStationsToState(event);
-    } else if (event is MarkerSelected && currentState is BikesLoaded) {
+    } else if (event is MarkerSelected && state is BikesLoaded) {
       yield* _mapMarkerSelectedToState(event);
-    } else if (event is LocationUpdate && currentState is BikesLoaded) {
-      yield (currentState as BikesLoaded).copyWith(
+    } else if (event is LocationUpdate && state is BikesLoaded) {
+      final stations = state.stations;
+      await _sortStationsByDistanceToUser(stations, event.userLocation);
+      yield state.copyWith(
         userLocation: event.userLocation,
+        zoomToLocation: true,
         hasPermission: event.hasPermission,
+        stations: stations,
       );
+      dispatch(MarkerSelected(stationId: stations[0].id));
     }
   }
 
@@ -64,14 +73,19 @@ class BikeStationsBloc extends Bloc<BikesEvent, BikesState> {
 
   Future<void> _getLocation(bool initialState) async {
     try {
-      var hasPermission = await _locationService.hasPermission();
+      var hasPermission =
+          await _locationService.checkGeolocationPermissionStatus() ==
+              GeolocationStatus.granted;
       if (!hasPermission && initialState) {
-        hasPermission = await _locationService.requestPermission();
+        hasPermission = await LocationPermissions().requestPermissions(
+              permissionLevel: LocationPermissionLevel.locationWhenInUse,
+            ) ==
+            PermissionStatus.granted;
       }
 
       LatLng userLocation;
       if (initialState && hasPermission) {
-        final location = await _locationService.getLocation();
+        final location = await _locationService.getLastKnownPosition();
         userLocation = LatLng(
           location.latitude,
           location.longitude,
@@ -95,6 +109,9 @@ class BikeStationsBloc extends Bloc<BikesEvent, BikesState> {
 
     try {
       final stations = await bikeRepository.getBikeStations();
+      if (state is BikesLoaded && state.userLocation != null) {
+        await _sortStationsByDistanceToUser(stations, state.userLocation);
+      }
       final stationsMap = Map<String, Station>.fromIterable(
         stations,
         key: (station) => station.id,
@@ -126,12 +143,14 @@ class BikeStationsBloc extends Bloc<BikesEvent, BikesState> {
 
       if (state is BikesLoaded) {
         yield state.copyWith(
-          stations: stationsMap,
+          stations: stations,
+          idToStation: stationsMap,
           markers: markers,
         );
       } else {
         yield BikesLoaded(
-          stations: stationsMap,
+          stations: stations,
+          idToStation: stationsMap,
           markers: markers,
         );
       }
@@ -140,13 +159,32 @@ class BikeStationsBloc extends Bloc<BikesEvent, BikesState> {
     }
   }
 
+  Future _sortStationsByDistanceToUser(
+    List<Station> stations,
+    LatLng userLocation,
+  ) async {
+    final distances = await Future.wait(
+        stations.map((station) => _locationService.distanceBetween(
+              userLocation.latitude,
+              userLocation.longitude,
+              station.lat,
+              station.lon,
+            )));
+    final stationToDistance = Map<Station, double>.fromIterables(
+      stations,
+      distances,
+    );
+    stations.sort((stationA, stationB) =>
+        (stationToDistance[stationA] - stationToDistance[stationB]).toInt());
+  }
+
   Stream<BikesState> _mapMarkerSelectedToState(MarkerSelected event) async* {
     var state = currentState as BikesLoaded;
     var markers = Map<String, Marker>.from(state.markers);
 
     if (state.selectedMarkerId != null) {
       var oldMarker = markers[state.selectedMarkerId];
-      var oldStation = state.stations[state.selectedMarkerId];
+      var oldStation = state.idToStation[state.selectedMarkerId];
       var oldStationIcon = await generatePngForNumber(oldStation.freeBikes);
       markers[state.selectedMarkerId] = oldMarker.copyWith(
         iconParam: BitmapDescriptor.fromBytes(oldStationIcon),
@@ -154,7 +192,7 @@ class BikeStationsBloc extends Bloc<BikesEvent, BikesState> {
       );
     }
 
-    var station = state.stations[event.stationId];
+    var station = state.idToStation[event.stationId];
     var newIcon = await generatePngForNumber(station.freeBikes, active: true);
     var oldMarker = markers[event.stationId];
     markers[event.stationId] = oldMarker.copyWith(
@@ -162,8 +200,7 @@ class BikeStationsBloc extends Bloc<BikesEvent, BikesState> {
       zIndexParam: 2,
     );
 
-    yield BikesLoaded(
-      stations: state.stations,
+    yield state.copyWith(
       markers: markers,
       selectedMarkerId: event.stationId,
     );

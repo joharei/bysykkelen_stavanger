@@ -64,7 +64,9 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
     return BlocListener(
       bloc: _bikeStationsBloc,
       listener: (context, state) async {
-        if (state is BikesLoaded && state.userLocation != null) {
+        if (state is BikesLoaded &&
+            state.userLocation != null &&
+            state.zoomToLocation) {
           final controller = await _mapController.future;
           controller.animateCamera(
               CameraUpdate.newLatLngZoom(state.userLocation, 14));

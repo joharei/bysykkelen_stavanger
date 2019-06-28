@@ -1,5 +1,6 @@
 import 'package:bysykkelen_stavanger/features/book_bike/book_bike_page.dart';
 import 'package:bysykkelen_stavanger/features/map_page/bloc/bloc.dart';
+import 'package:bysykkelen_stavanger/features/map_page/bloc/event.dart';
 import 'package:bysykkelen_stavanger/features/map_page/bloc/state.dart';
 import 'package:bysykkelen_stavanger/models/models.dart';
 import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
@@ -16,10 +17,12 @@ class BikeCarousel extends StatelessWidget {
       bloc: BlocProvider.of<BikeStationsBloc>(context),
       listener: (context, BikesState state) {
         if (state is BikesLoaded && state.selectedMarkerId != null) {
-          var stations = state.stations.values.toList();
           var selectedStationId = state.selectedMarkerId;
-          _pageController.jumpToPage(
-            stations.indexWhere((station) => station.id == selectedStationId),
+          _pageController.animateToPage(
+            state.stations
+                .indexWhere((station) => station.id == selectedStationId),
+            duration: Duration(milliseconds: 500),
+            curve: Curves.ease,
           );
         }
       },
@@ -28,7 +31,7 @@ class BikeCarousel extends StatelessWidget {
         builder: (context, BikesState state) {
           List<Station> stations = [];
           if (state is BikesLoaded) {
-            stations = state.stations.values.toList();
+            stations = state.stations;
           }
 
           return SizedBox(
@@ -36,6 +39,10 @@ class BikeCarousel extends StatelessWidget {
             child: PageView.builder(
               controller: _pageController,
               itemCount: stations.length,
+              onPageChanged: (page) {
+                BlocProvider.of<BikeStationsBloc>(context)
+                    .dispatch(MarkerSelected(stationId: stations[page].id));
+              },
               itemBuilder: (context, index) {
                 var station = stations[index];
                 return Container(
@@ -61,10 +68,10 @@ class BikeCarousel extends StatelessWidget {
                           Padding(padding: EdgeInsets.only(top: 16)),
                           RaisedButton(
                             onPressed: () => BookBikePage.show(
-                                  context,
-                                  Provider.of(context),
-                                  station,
-                                ),
+                              context,
+                              Provider.of(context),
+                              station,
+                            ),
                             child: Text(Localization.of(context).bookBike),
                           ),
                         ],
