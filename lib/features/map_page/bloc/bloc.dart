@@ -38,7 +38,7 @@ class BikeStationsBloc extends Bloc<BikesEvent, BikesState> {
   @override
   Stream<BikesState> mapEventToState(BikesEvent event) async* {
     if (event is StartPollingStations) {
-      await _mapStartPollingToState(event);
+      _mapStartPollingToState(event);
     } else if (event is FetchBikeStations) {
       yield* _mapFetchBikeStationsToState(event);
     } else if (event is MarkerSelected && currentState is BikesLoaded) {

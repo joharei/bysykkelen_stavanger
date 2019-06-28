@@ -32,7 +32,6 @@ class LocationUpdate extends BikesEvent {
   LocationUpdate({
     @required this.userLocation,
     @required this.hasPermission,
-  })  : assert(userLocation != null),
-        assert(hasPermission != null),
+  })  : assert(hasPermission != null),
         super([userLocation, hasPermission]);
 }

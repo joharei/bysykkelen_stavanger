@@ -83,7 +83,8 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
                     bottom: safeAreaBottomInset(context) +
                         (Platform.isAndroid ? 165 : 135)),
                 myLocationButtonEnabled: false,
-                myLocationEnabled: state is BikesLoaded && state.hasPermission,
+                myLocationEnabled: true,
+                compassEnabled: true,
                 onMapCreated: (controller) {
                   _mapController.complete(controller);
                 },
