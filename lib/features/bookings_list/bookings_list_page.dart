@@ -3,49 +3,38 @@ import 'dart:io';
 
 import 'package:bysykkelen_stavanger/features/bookings_list/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/bookings_list/bloc/event.dart';
-import 'package:bysykkelen_stavanger/repositories/bike_repository.dart';
 import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
 import 'bloc/state.dart';
 
 class BookingsListPage extends StatefulWidget {
-  final BikeRepository bikeRepository;
+  final BookingsBloc bookingsBloc;
 
-  const BookingsListPage({Key key, @required this.bikeRepository})
+  const BookingsListPage({Key key, @required this.bookingsBloc})
       : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _BookingsListPageState();
-
-  static Future show(BuildContext context) => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) =>
-              BookingsListPage(bikeRepository: Provider.of(context)),
-        ),
-      );
 }
 
 class _BookingsListPageState extends State<BookingsListPage> {
-  BookingsBloc _bloc;
   Completer<void> _refreshCompleter;
   final GlobalKey<RefreshIndicatorState> _refreshIndicator = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    _bloc = BookingsBloc(bikeRepository: widget.bikeRepository);
-    _bloc.dispatch(FetchBookings(context: context));
+    widget.bookingsBloc.dispatch(FetchBookings(context: context));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener(
-        bloc: _bloc,
+        bloc: widget.bookingsBloc,
         listener: (context, state) {
           if (state is BookingsReady) {
             if (state.message != null) {
@@ -62,7 +51,7 @@ class _BookingsListPageState extends State<BookingsListPage> {
           }
         },
         child: BlocBuilder(
-          bloc: _bloc,
+          bloc: widget.bookingsBloc,
           builder: (context, state) {
             return SafeArea(
               child: Stack(
@@ -104,7 +93,7 @@ class _BookingsListPageState extends State<BookingsListPage> {
 
   Future<void> _onRefresh(state, BuildContext context) {
     if (state is BookingsReady && !state.refreshing) {
-      _bloc.dispatch(FetchBookings(context: context));
+      widget.bookingsBloc.dispatch(FetchBookings(context: context));
     }
     _refreshCompleter = Completer();
     return _refreshCompleter.future;
@@ -135,7 +124,7 @@ class _BookingsListPageState extends State<BookingsListPage> {
                     icon: Icon(Icons.delete, color: Colors.red),
                     onPressed: () {
                       return {
-                        _bloc.dispatch(
+                        widget.bookingsBloc.dispatch(
                           DeleteBooking(
                             context: context,
                             booking: booking,

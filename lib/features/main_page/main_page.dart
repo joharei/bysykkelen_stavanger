@@ -1,3 +1,4 @@
+import 'package:bysykkelen_stavanger/features/bookings_list/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/bookings_list/bookings_list_page.dart';
 import 'package:bysykkelen_stavanger/features/map/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/map/map_page.dart';
@@ -17,6 +18,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   BikeStationsBloc bikeStationsBloc;
+  BookingsBloc bookingsBloc;
   List<Widget> pages;
 
   int navIndex = 0;
@@ -25,9 +27,11 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     bikeStationsBloc = BikeStationsBloc(bikeRepository: widget.bikeRepository);
+    bookingsBloc = BookingsBloc(bikeRepository: widget.bikeRepository);
+
     pages = [
       MapPage(bikeStationsBloc: bikeStationsBloc),
-      BookingsListPage(bikeRepository: widget.bikeRepository),
+      BookingsListPage(bookingsBloc: bookingsBloc),
       TripsPage(),
     ];
   }
@@ -35,6 +39,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void dispose() {
     bikeStationsBloc.dispose();
+    bookingsBloc.dispose();
     super.dispose();
   }
 
