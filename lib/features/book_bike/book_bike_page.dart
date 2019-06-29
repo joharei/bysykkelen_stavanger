@@ -28,7 +28,10 @@ class BookBikePage extends StatefulWidget {
       showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(16)),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+          ),
         ),
         backgroundColor: Colors.white,
         builder: (context) => BookBikePage(bikeRepository, station),
@@ -173,10 +176,10 @@ class _BookBikePageState extends State<BookBikePage> {
                                   ? ProgressState.done
                                   : ProgressState.idle,
                       onPressed: () => _addBookingButtonPressed(
-                            context,
-                            minimumDateTime,
-                            maximumDateTime,
-                          ),
+                        context,
+                        minimumDateTime,
+                        maximumDateTime,
+                      ),
                     ),
                   ),
                 ],
