@@ -2,9 +2,6 @@ import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
 
 class LocalizationNO extends Localization {
   @override
-  String get bookings => 'Reservasjoner';
-
-  @override
   String get bookBike => 'Reserver sykkel';
 
   @override
@@ -59,4 +56,13 @@ class LocalizationNO extends Localization {
 
   @override
   String get bookingsFailed => 'Klarte ikke å hente reservasjonene dine.';
+
+  @override
+  String get mapPageTitle => 'Kart';
+
+  @override
+  String get bookingsPageTitle => 'Bookings';
+
+  @override
+  String get tripsPageTitle => 'Trips';
 }

@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
-import 'package:bysykkelen_stavanger/features/map_page/bloc/event.dart';
-import 'package:bysykkelen_stavanger/features/map_page/bloc/state.dart';
-import 'package:bysykkelen_stavanger/features/map_page/png_generator.dart';
+import 'package:bysykkelen_stavanger/features/map/bloc/event.dart';
+import 'package:bysykkelen_stavanger/features/map/bloc/state.dart';
+import 'package:bysykkelen_stavanger/features/map/png_generator.dart';
 import 'package:bysykkelen_stavanger/models/models.dart';
 import 'package:bysykkelen_stavanger/repositories/repositories.dart';
 import 'package:flutter/foundation.dart';
@@ -22,12 +22,7 @@ class BikeStationsBloc extends Bloc<BikesEvent, BikesState> {
       : assert(bikeRepository != null);
 
   @override
-  BikesState get initialState => BikesLoaded(
-        stations: [],
-        idToStation: {},
-        markers: {},
-        selectedMarkerId: null,
-      );
+  BikesState get initialState => BikesLoading();
 
   @override
   void dispose() {
@@ -57,6 +52,8 @@ class BikeStationsBloc extends Bloc<BikesEvent, BikesState> {
         stations: stations,
       );
       dispatch(MarkerSelected(stationId: stations[0].id));
+    } else if (event is PageOnDispose && state is BikesLoaded) {
+      yield state.copyWith(cameraPosition: event.cameraPosition);
     }
   }
 

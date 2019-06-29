@@ -7,8 +7,6 @@ abstract class Localization {
   static Localization of(BuildContext context) =>
       Localizations.of<Localization>(context, Localization);
 
-  String get bookings;
-
   String get bookBike;
 
   String availableBikes(int availableBikes);
@@ -44,6 +42,12 @@ abstract class Localization {
   String get loginFailed;
 
   String get bookingsFailed;
+
+  String get mapPageTitle;
+
+  String get bookingsPageTitle;
+
+  String get tripsPageTitle;
 }
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<Localization> {

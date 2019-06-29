@@ -1,7 +1,7 @@
 import 'package:bysykkelen_stavanger/features/book_bike/book_bike_page.dart';
-import 'package:bysykkelen_stavanger/features/map_page/bloc/bloc.dart';
-import 'package:bysykkelen_stavanger/features/map_page/bloc/event.dart';
-import 'package:bysykkelen_stavanger/features/map_page/bloc/state.dart';
+import 'package:bysykkelen_stavanger/features/map/bloc/bloc.dart';
+import 'package:bysykkelen_stavanger/features/map/bloc/event.dart';
+import 'package:bysykkelen_stavanger/features/map/bloc/state.dart';
 import 'package:bysykkelen_stavanger/models/models.dart';
 import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
 import 'package:flutter/material.dart';
@@ -23,15 +23,20 @@ class _BikeCarouselState extends State<BikeCarousel> {
       bloc: BlocProvider.of<BikeStationsBloc>(context),
       listener: (context, BikesState state) async {
         if (state is BikesLoaded && state.selectedMarkerId != null) {
-          var selectedStationId = state.selectedMarkerId;
-          _animatingToPage = true;
-          await _pageController.animateToPage(
-            state.stations
-                .indexWhere((station) => station.id == selectedStationId),
-            duration: Duration(milliseconds: 500),
-            curve: Curves.ease,
-          );
-          _animatingToPage = false;
+          final selectedStationId = state.selectedMarkerId;
+          final page = state.stations
+              .indexWhere((station) => station.id == selectedStationId);
+          if (state.wasResumed) {
+            _pageController.jumpToPage(page);
+          } else {
+            _animatingToPage = true;
+            await _pageController.animateToPage(
+              page,
+              duration: Duration(milliseconds: 500),
+              curve: Curves.ease,
+            );
+            _animatingToPage = false;
+          }
         }
       },
       child: BlocBuilder(

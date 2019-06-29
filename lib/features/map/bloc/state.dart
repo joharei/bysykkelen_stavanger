@@ -19,6 +19,8 @@ class BikesLoaded extends BikesState {
   final LatLng userLocation;
   final bool zoomToLocation;
   final bool hasPermission;
+  final CameraPosition cameraPosition;
+  bool get wasResumed => cameraPosition != null;
 
   BikesLoaded({
     @required this.stations,
@@ -28,6 +30,7 @@ class BikesLoaded extends BikesState {
     this.userLocation,
     this.zoomToLocation = false,
     this.hasPermission = false,
+    this.cameraPosition,
   })  : assert(stations != null),
         assert(idToStation != null),
         assert(markers != null),
@@ -39,6 +42,7 @@ class BikesLoaded extends BikesState {
           userLocation,
           zoomToLocation,
           hasPermission,
+          cameraPosition,
         ]);
 
   BikesLoaded copyWith({
@@ -49,6 +53,7 @@ class BikesLoaded extends BikesState {
     LatLng userLocation,
     bool zoomToLocation,
     bool hasPermission,
+    CameraPosition cameraPosition,
   }) =>
       BikesLoaded(
         stations: stations ?? this.stations,
@@ -56,8 +61,9 @@ class BikesLoaded extends BikesState {
         markers: markers ?? this.markers,
         selectedMarkerId: selectedMarkerId ?? this.selectedMarkerId,
         userLocation: userLocation ?? this.userLocation,
-        // One-off
-        zoomToLocation: zoomToLocation ?? false,
         hasPermission: hasPermission ?? this.hasPermission,
+        // One-offs
+        zoomToLocation: zoomToLocation ?? false,
+        cameraPosition: cameraPosition,
       );
 }

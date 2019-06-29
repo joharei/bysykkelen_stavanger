@@ -13,16 +13,18 @@ import 'package:provider/provider.dart';
 import 'bloc/state.dart';
 
 class BookingsListPage extends StatefulWidget {
-  final BikeRepository _bikeRepository;
+  final BikeRepository bikeRepository;
 
-  BookingsListPage(this._bikeRepository);
+  const BookingsListPage({Key key, @required this.bikeRepository})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _BookingsListPageState();
 
   static Future show(BuildContext context) => Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => BookingsListPage(Provider.of(context)),
+          builder: (context) =>
+              BookingsListPage(bikeRepository: Provider.of(context)),
         ),
       );
 }
@@ -35,7 +37,7 @@ class _BookingsListPageState extends State<BookingsListPage> {
   @override
   void initState() {
     super.initState();
-    _bloc = BookingsBloc(bikeRepository: widget._bikeRepository);
+    _bloc = BookingsBloc(bikeRepository: widget.bikeRepository);
     _bloc.dispatch(FetchBookings(context: context));
   }
 
@@ -112,7 +114,7 @@ class _BookingsListPageState extends State<BookingsListPage> {
     return CustomScrollView(
       slivers: [
         SliverAppBar(
-          title: Text(Localization.of(context).bookings),
+          title: Text(Localization.of(context).bookingsPageTitle),
           floating: true,
           pinned: true,
         ),

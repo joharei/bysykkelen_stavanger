@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:bysykkelen_stavanger/features/map_page/map_page.dart';
+import 'package:bysykkelen_stavanger/features/main_page/main_page.dart';
 import 'package:bysykkelen_stavanger/repositories/bike_repository.dart';
 import 'package:bysykkelen_stavanger/repositories/bysykkelen_scraper.dart';
 import 'package:bysykkelen_stavanger/repositories/citibikes_api_client.dart';
@@ -64,7 +64,7 @@ class App extends StatelessWidget {
         const Locale('en', ''),
         const Locale('nb', ''),
       ],
-      home: MapPage(bikeRepository: Provider.of<BikeRepository>(context)),
+      home: MainPage(bikeRepository: Provider.of(context)),
     );
   }
 }

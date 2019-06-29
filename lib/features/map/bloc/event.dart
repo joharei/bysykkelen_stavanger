@@ -35,3 +35,11 @@ class LocationUpdate extends BikesEvent {
   })  : assert(hasPermission != null),
         super([userLocation, hasPermission]);
 }
+
+class PageOnDispose extends BikesEvent {
+  final CameraPosition cameraPosition;
+
+  PageOnDispose({@required this.cameraPosition})
+      : assert(cameraPosition != null),
+        super([cameraPosition]);
+}
