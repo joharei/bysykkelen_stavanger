@@ -72,8 +72,7 @@ class _BookingsListPageState extends State<BookingsListPage> {
                       ),
                     ),
                   if (state is BookingsReady &&
-                      state.bookings.isEmpty &&
-                      !state.refreshing)
+                      state.bookings.isEmpty)
                     Container(
                       padding: EdgeInsets.all(16),
                       alignment: Alignment.center,

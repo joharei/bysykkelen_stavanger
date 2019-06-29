@@ -16,10 +16,13 @@ class MainPage extends StatefulWidget {
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainPageState extends State<MainPage>
+    with TickerProviderStateMixin<MainPage> {
   BikeStationsBloc bikeStationsBloc;
   BookingsBloc bookingsBloc;
   List<Widget> pages;
+  List<AnimationController> faders;
+  List<Key> pageKeys;
 
   int navIndex = 0;
 
@@ -34,10 +37,23 @@ class _MainPageState extends State<MainPage> {
       BookingsListPage(bookingsBloc: bookingsBloc),
       TripsPage(),
     ];
+    faders = pages
+        .map(
+          (_) => AnimationController(
+            vsync: this,
+            duration: Duration(milliseconds: 200),
+          ),
+        )
+        .toList();
+    faders[navIndex].value = 1.0;
+    pageKeys = List.generate(pages.length, (index) => GlobalKey()).toList();
   }
 
   @override
   void dispose() {
+    for (var controller in faders) {
+      controller.dispose();
+    }
     bikeStationsBloc.dispose();
     bookingsBloc.dispose();
     super.dispose();
@@ -46,7 +62,9 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: pages[navIndex],
+      body: Stack(
+        children: _buildPages(),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: navIndex,
         onTap: (index) => setState(() {
@@ -68,5 +86,32 @@ class _MainPageState extends State<MainPage> {
         ],
       ),
     );
+  }
+
+  List<Widget> _buildPages() {
+    Widget buildTransition(int pageIndex) => FadeTransition(
+        opacity:
+            faders[pageIndex].drive(CurveTween(curve: Curves.fastOutSlowIn)),
+        child: KeyedSubtree(
+          key: pageKeys[pageIndex],
+          child: pages[pageIndex],
+        ));
+    Widget buildForward(int pageIndex) {
+      faders[pageIndex].forward();
+      return buildTransition(pageIndex);
+    }
+
+    Widget buildIgnorePointer(int pageIndex) {
+      faders[pageIndex].reverse();
+      return IgnorePointer(child: widget);
+    }
+
+    return [
+      for (var pageIndex = 0; pageIndex < pages.length; pageIndex++)
+        if (pageIndex == navIndex)
+          buildForward(pageIndex)
+        else if (faders[pageIndex].isAnimating)
+          buildIgnorePointer(pageIndex)
+    ];
   }
 }
