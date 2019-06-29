@@ -1,0 +1,8 @@
+/* 
+  InfoPlist.strings
+  Runner
+
+  Created by Johan Reitan on 29/06/2019.
+  Copyright © 2019 The Chromium Authors. All rights reserved.
+*/
+NSLocationWhenInUseUsageDescription = "Appen bruker posisjonen din til å vise hvor du er i kartet, og for å sortere listen over sykkelstasjoner.";
