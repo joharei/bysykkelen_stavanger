@@ -8,22 +8,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
-class BikeCarousel extends StatelessWidget {
+class BikeCarousel extends StatefulWidget {
+  @override
+  _BikeCarouselState createState() => _BikeCarouselState();
+}
+
+class _BikeCarouselState extends State<BikeCarousel> {
   final _pageController = PageController(viewportFraction: 0.9);
+  var _animatingToPage = false;
 
   @override
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: BlocProvider.of<BikeStationsBloc>(context),
-      listener: (context, BikesState state) {
+      listener: (context, BikesState state) async {
         if (state is BikesLoaded && state.selectedMarkerId != null) {
           var selectedStationId = state.selectedMarkerId;
-          _pageController.animateToPage(
+          _animatingToPage = true;
+          await _pageController.animateToPage(
             state.stations
                 .indexWhere((station) => station.id == selectedStationId),
             duration: Duration(milliseconds: 500),
             curve: Curves.ease,
           );
+          _animatingToPage = false;
         }
       },
       child: BlocBuilder(
@@ -40,8 +48,10 @@ class BikeCarousel extends StatelessWidget {
               controller: _pageController,
               itemCount: stations.length,
               onPageChanged: (page) {
-                BlocProvider.of<BikeStationsBloc>(context)
-                    .dispatch(MarkerSelected(stationId: stations[page].id));
+                if (!_animatingToPage) {
+                  BlocProvider.of<BikeStationsBloc>(context)
+                      .dispatch(MarkerSelected(stationId: stations[page].id));
+                }
               },
               itemBuilder: (context, index) {
                 var station = stations[index];
