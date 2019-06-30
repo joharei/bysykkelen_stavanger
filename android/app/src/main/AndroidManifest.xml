@@ -4,6 +4,7 @@
     package="no.johanreitan.bysykkelen_stavanger"
     tools:ignore="MissingVersion">
 
+    <uses-feature android:name="android.hardware.location" android:required="false" />
     <uses-permission-sdk-23 android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <!-- io.flutter.app.FlutterApplication is an android.app.Application that
