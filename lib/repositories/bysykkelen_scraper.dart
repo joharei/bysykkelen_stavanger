@@ -1,4 +1,5 @@
 import 'package:bysykkelen_stavanger/features/bookings_list/booking.dart';
+import 'package:bysykkelen_stavanger/features/trips/Trip.dart';
 import 'package:bysykkelen_stavanger/models/models.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
@@ -140,6 +141,25 @@ class BysykkelenScraper {
     } catch (e) {
       return null;
     }
+  }
+
+  Future<List<Trip>> fetchTrips() async {
+    dio.options = BaseOptions(
+      baseUrl: _baseUrl,
+      responseType: ResponseType.plain,
+      validateStatus: (status) => status == 200,
+    );
+
+//    final bookings =
+//        await _fetchBookingsUrl('/bookings/indextable', 'data-booking-id');
+//    final reservations = await _fetchBookingsUrl(
+//        '/reservations/indextable', 'data-reservation-id');
+//
+//    if (bookings == null && reservations == null) {
+//      return null;
+//    }
+
+    return [];
   }
 
   Future<bool> deleteBooking(Booking booking) async {

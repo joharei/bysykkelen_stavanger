@@ -66,4 +66,11 @@ class LocalizationEN extends Localization {
 
   @override
   String get tripsPageTitle => 'Trips';
+
+  @override
+  String get noTripsInfo => 'You don\'t have any trips yet! When you use the '
+      'city bikes, your trips will appear here.';
+
+  @override
+  String get tripsFailed => 'Failed to get your trips.';
 }

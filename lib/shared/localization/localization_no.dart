@@ -61,8 +61,15 @@ class LocalizationNO extends Localization {
   String get mapPageTitle => 'Kart';
 
   @override
-  String get bookingsPageTitle => 'Bookings';
+  String get bookingsPageTitle => 'Reserveringer';
 
   @override
-  String get tripsPageTitle => 'Trips';
+  String get tripsPageTitle => 'Turer';
+
+  @override
+  String get noTripsInfo => 'Du har ikke syklet noen turer ennå! Turene du har '
+      'syklet med Bysykkelen dukker opp her.';
+
+  @override
+  String get tripsFailed => 'Klarte ikke å hente turene dine';
 }

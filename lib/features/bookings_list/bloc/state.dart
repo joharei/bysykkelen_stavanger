@@ -8,16 +8,14 @@ abstract class BookingsListState extends Equatable {
 
 class BookingsReady extends BookingsListState {
   final List<Booking> bookings;
-  final String message;
   final bool refreshing;
 
   BookingsReady({
     @required this.bookings,
     @required this.refreshing,
-    this.message,
   })  : assert(bookings != null),
         assert(refreshing != null),
-        super([bookings, refreshing, message]);
+        super([bookings, refreshing]);
 
   BookingsReady copyWith({
     List<Booking> bookings,
@@ -27,7 +25,6 @@ class BookingsReady extends BookingsListState {
       BookingsReady(
         bookings: bookings ?? this.bookings,
         refreshing: refreshing ?? this.refreshing,
-        message: message,
       );
 }
 

@@ -2,6 +2,7 @@ import 'package:bysykkelen_stavanger/features/bookings_list/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/bookings_list/bookings_list_page.dart';
 import 'package:bysykkelen_stavanger/features/map/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/map/map_page.dart';
+import 'package:bysykkelen_stavanger/features/trips/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/trips/trips_page.dart';
 import 'package:bysykkelen_stavanger/repositories/repositories.dart';
 import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
@@ -18,8 +19,11 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage>
     with TickerProviderStateMixin<MainPage> {
+
   BikeStationsBloc bikeStationsBloc;
   BookingsBloc bookingsBloc;
+  TripsBloc tripsBloc;
+
   List<Widget> pages;
   List<AnimationController> faders;
   List<Key> pageKeys;
@@ -31,11 +35,12 @@ class _MainPageState extends State<MainPage>
     super.initState();
     bikeStationsBloc = BikeStationsBloc(bikeRepository: widget.bikeRepository);
     bookingsBloc = BookingsBloc(bikeRepository: widget.bikeRepository);
+    tripsBloc = TripsBloc(bikeRepository: widget.bikeRepository);
 
     pages = [
       MapPage(bikeStationsBloc: bikeStationsBloc),
       BookingsListPage(bookingsBloc: bookingsBloc),
-      TripsPage(),
+      TripsPage(tripsBloc: tripsBloc),
     ];
     faders = pages
         .map(
@@ -56,6 +61,7 @@ class _MainPageState extends State<MainPage>
     }
     bikeStationsBloc.dispose();
     bookingsBloc.dispose();
+    tripsBloc.dispose();
     super.dispose();
   }
 

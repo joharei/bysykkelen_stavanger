@@ -48,6 +48,10 @@ abstract class Localization {
   String get bookingsPageTitle;
 
   String get tripsPageTitle;
+
+  String get noTripsInfo;
+
+  String get tripsFailed;
 }
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<Localization> {
