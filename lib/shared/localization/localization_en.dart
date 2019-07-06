@@ -73,4 +73,7 @@ class LocalizationEN extends Localization {
 
   @override
   String get tripsFailed => 'Failed to get your trips.';
+
+  @override
+  String fromTo(String from, String to) => '$from to $to';
 }

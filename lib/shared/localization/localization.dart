@@ -52,6 +52,8 @@ abstract class Localization {
   String get noTripsInfo;
 
   String get tripsFailed;
+
+  String fromTo(String from, String to);
 }
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<Localization> {

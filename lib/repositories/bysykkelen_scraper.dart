@@ -150,16 +150,31 @@ class BysykkelenScraper {
       validateStatus: (status) => status == 200,
     );
 
-//    final bookings =
-//        await _fetchBookingsUrl('/bookings/indextable', 'data-booking-id');
-//    final reservations = await _fetchBookingsUrl(
-//        '/reservations/indextable', 'data-reservation-id');
-//
-//    if (bookings == null && reservations == null) {
-//      return null;
-//    }
+    try {
+      final tripsResponse = await dio.get(
+        '/trips/indextable',
+        queryParameters: {
+          'NoHeader': 'True',
+          'Page': 0,
+        },
+      );
+      final tripsDocument = parser.parse(tripsResponse.data.toString());
+      final tripsElements = tripsDocument.querySelectorAll('tr');
+      final trips = tripsElements.map(
+        (element) => Trip(
+          fromDate: element.children[1].text,
+          fromStation: element.children[2].text,
+          toDate: element.children[3].text,
+          toStation: element.children[4].text,
+          price: element.children[5].text,
+          detailsUrl: element.querySelector('a').attributes['href'],
+        ),
+      );
 
-    return [];
+      return trips.toList();
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<bool> deleteBooking(Booking booking) async {

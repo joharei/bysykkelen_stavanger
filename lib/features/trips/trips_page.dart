@@ -56,8 +56,10 @@ class _TripsPageState extends State<TripsPage> {
               (context, index) {
                 final trip = state.trips[index];
                 return ListTile(
-                  title: Text(trip.fromPlace),
-                  subtitle: Text(trip.time),
+                  title: Text(Localization.of(context)
+                      .fromTo(trip.fromStation, trip.toStation)),
+                  subtitle: Text(trip.fromDate),
+                  trailing: trip.price == '0' ? null : Text('${trip.price} kr'),
                 );
               },
               childCount: state.trips.length,
