@@ -8,9 +8,12 @@ abstract class TripsEvent extends Equatable {
 
 class FetchTrips extends TripsEvent {
   final BuildContext context;
+  final bool refresh;
 
   FetchTrips({
     @required this.context,
+    @required this.refresh,
   })  : assert(context != null),
-        super([context]);
+        assert(refresh != null),
+        super([context, refresh]);
 }

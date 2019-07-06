@@ -37,6 +37,11 @@ class _BookingsListPageState extends State<BookingsListPage> {
         bloc: widget.bookingsBloc,
         listener: (context, state) {
           if (state is BookingsReady) {
+            if (state.message != null) {
+              Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text(state.message),
+              ));
+            }
             if (state.refreshing && _refreshIndicator.currentState != null) {
               _refreshIndicator.currentState.show();
             } else if (_refreshCompleter != null &&
@@ -67,6 +72,7 @@ class _BookingsListPageState extends State<BookingsListPage> {
                       ),
                     ),
                   if (state is BookingsReady &&
+                      !state.refreshing &&
                       state.bookings.isEmpty)
                     Container(
                       padding: EdgeInsets.all(16),

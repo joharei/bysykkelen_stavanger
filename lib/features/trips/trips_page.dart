@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bysykkelen_stavanger/features/trips/bloc/bloc.dart';
-import 'package:bysykkelen_stavanger/features/trips/bloc/event.dart';
 import 'package:bysykkelen_stavanger/features/trips/bloc/state.dart';
 import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
 import 'package:flutter/cupertino.dart' show CupertinoSliverRefreshControl;
@@ -22,52 +21,79 @@ class TripsPage extends StatefulWidget {
 class _TripsPageState extends State<TripsPage> {
   Completer<void> _refreshCompleter;
   final GlobalKey<RefreshIndicatorState> _refreshIndicator = GlobalKey();
+  final _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    widget.tripsBloc.dispatch(FetchTrips(context: context));
+    widget.tripsBloc.getNextListPage(context);
   }
 
   Future<void> _onRefresh(state, BuildContext context) {
     if (state is TripsReady && !state.refreshing) {
-      widget.tripsBloc.dispatch(FetchTrips(context: context));
+      widget.tripsBloc.refresh(context);
     }
     _refreshCompleter = Completer();
     return _refreshCompleter.future;
   }
 
-  CustomScrollView _buildCustomScrollView(BuildContext context, state) {
-    return CustomScrollView(
-      slivers: [
-        SliverAppBar(
-          title: Text(Localization.of(context).tripsPageTitle),
-          floating: true,
-          pinned: true,
-        ),
-        if (Platform.isIOS)
-          CupertinoSliverRefreshControl(
-            onRefresh: () => _onRefresh(state, context),
+  Widget _buildCustomScrollView(BuildContext context, state) {
+    return NotificationListener<ScrollNotification>(
+      onNotification: _handleScrollNotification(context, state),
+      child: CustomScrollView(
+        controller: _scrollController,
+        slivers: [
+          SliverAppBar(
+            title: Text(Localization.of(context).tripsPageTitle),
+            floating: true,
+            pinned: true,
           ),
-        if (state is TripsReady)
-          SliverFixedExtentList(
-            itemExtent: 75,
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final trip = state.trips[index];
-                return ListTile(
-                  title: Text(Localization.of(context)
-                      .fromTo(trip.fromStation, trip.toStation)),
-                  subtitle: Text(trip.fromDate),
-                  trailing: trip.price == '0' ? null : Text('${trip.price} kr'),
-                );
-              },
-              childCount: state.trips.length,
+          if (Platform.isIOS)
+            CupertinoSliverRefreshControl(
+              onRefresh: () => _onRefresh(state, context),
             ),
-          ),
-      ],
+          if (state is TripsReady)
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  if (index >= state.trips.length) {
+                    return Center(child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: CircularProgressIndicator(),
+                    ));
+                  }
+                  final trip = state.trips[index];
+                  return ListTile(
+                    title: Text(Localization.of(context)
+                        .fromTo(trip.fromStation, trip.toStation)),
+                    subtitle: Text(trip.fromDate),
+                    trailing:
+                        trip.price == '0' ? null : Text('${trip.price} kr'),
+                  );
+                },
+                childCount: state.hasReachedEnd || state.trips.isEmpty
+                    ? state.trips.length
+                    : state.trips.length + 1,
+              ),
+            ),
+        ],
+      ),
     );
   }
+
+  NotificationListenerCallback<ScrollNotification> _handleScrollNotification(
+    BuildContext context,
+    TripsListState state,
+  ) =>
+      (ScrollNotification notification) {
+        if (notification is ScrollEndNotification &&
+            _scrollController.position.extentAfter == 0 &&
+            state is TripsReady &&
+            !state.hasReachedEnd) {
+          widget.tripsBloc.getNextListPage(context);
+        }
+        return false;
+      };
 
   Widget _buildRootWidget(BuildContext context, TripsListState state) {
     return Stack(
@@ -87,7 +113,7 @@ class _TripsPageState extends State<TripsPage> {
               style: Theme.of(context).textTheme.subhead,
             ),
           ),
-        if (state is TripsReady && state.trips.isEmpty)
+        if (state is TripsReady && !state.refreshing && state.trips.isEmpty)
           Container(
             padding: EdgeInsets.all(16),
             alignment: Alignment.center,

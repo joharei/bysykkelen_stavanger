@@ -8,22 +8,26 @@ abstract class TripsListState extends Equatable {
 
 class TripsReady extends TripsListState {
   final List<Trip> trips;
+  final bool hasReachedEnd;
   final bool refreshing;
 
   TripsReady({
     @required this.trips,
+    @required this.hasReachedEnd,
     @required this.refreshing,
   })  : assert(trips != null),
+        assert(hasReachedEnd != null),
         assert(refreshing != null),
-        super([trips, refreshing]);
+        super([trips, hasReachedEnd, refreshing]);
 
   TripsReady copyWith({
     List<Trip> trips,
+    bool hasReachedEnd,
     bool refreshing,
-    String message,
   }) =>
       TripsReady(
         trips: trips ?? this.trips,
+        hasReachedEnd: hasReachedEnd ?? this.hasReachedEnd,
         refreshing: refreshing ?? this.refreshing,
       );
 }

@@ -143,7 +143,7 @@ class BysykkelenScraper {
     }
   }
 
-  Future<List<Trip>> fetchTrips() async {
+  Future<List<Trip>> fetchTrips(int page) async {
     dio.options = BaseOptions(
       baseUrl: _baseUrl,
       responseType: ResponseType.plain,
@@ -155,10 +155,15 @@ class BysykkelenScraper {
         '/trips/indextable',
         queryParameters: {
           'NoHeader': 'True',
-          'Page': 0,
+          'Page': page,
         },
       );
       final tripsDocument = parser.parse(tripsResponse.data.toString());
+
+      if (tripsDocument.querySelector('h4') != null) {
+        throw NoNextPageException();
+      }
+
       final tripsElements = tripsDocument.querySelectorAll('tr');
       final trips = tripsElements.map(
         (element) => Trip(
@@ -172,8 +177,10 @@ class BysykkelenScraper {
       );
 
       return trips.toList();
-    } catch (e) {
-      return null;
+    } on NoNextPageException catch (e) {
+      throw e;
+    } catch (_) {
+      throw ScrapingException();
     }
   }
 
@@ -214,3 +221,7 @@ class BysykkelenScraper {
       '${dateTime.hour.toString().padLeft(2, '0')}:'
       '${dateTime.minute.toString().padLeft(2, '0')}';
 }
+
+class ScrapingException implements Exception {}
+
+class NoNextPageException implements Exception {}
