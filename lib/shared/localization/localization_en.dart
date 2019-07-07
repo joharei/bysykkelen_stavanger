@@ -76,4 +76,7 @@ class LocalizationEN extends Localization {
 
   @override
   String fromTo(String from, String to) => '$from to $to';
+
+  @override
+  String toStation(String to) => 'To $to';
 }

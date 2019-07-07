@@ -5,6 +5,7 @@ import 'package:bysykkelen_stavanger/features/map/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/map/bloc/event.dart';
 import 'package:bysykkelen_stavanger/features/map/bloc/state.dart';
 import 'package:bysykkelen_stavanger/features/map/carousel.dart';
+import 'package:bysykkelen_stavanger/shared/initial_position.dart';
 import 'package:bysykkelen_stavanger/shared/safe_area_insets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,10 +22,7 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   Completer<GoogleMapController> mapController = Completer();
-  CameraPosition cameraPosition = CameraPosition(
-    target: LatLng(58.9109397, 5.7244898),
-    zoom: 11.5,
-  );
+  CameraPosition cameraPosition = initialPosition;
 
   @override
   void initState() {

@@ -1,4 +1,4 @@
-import 'package:bysykkelen_stavanger/features/trips/Trip.dart';
+import 'package:bysykkelen_stavanger/features/trips/trip.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 

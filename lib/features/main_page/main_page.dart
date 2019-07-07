@@ -19,6 +19,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage>
     with TickerProviderStateMixin<MainPage> {
+  final tripsNavigatorKey = GlobalKey<NavigatorState>();
 
   BikeStationsBloc bikeStationsBloc;
   BookingsBloc bookingsBloc;
@@ -40,7 +41,7 @@ class _MainPageState extends State<MainPage>
     pages = [
       MapPage(bikeStationsBloc: bikeStationsBloc),
       BookingsListPage(bookingsBloc: bookingsBloc),
-      TripsPage(tripsBloc: tripsBloc),
+      TripsNavigator(navigatorKey: tripsNavigatorKey, tripsBloc: tripsBloc),
     ];
     faders = pages
         .map(
@@ -67,29 +68,32 @@ class _MainPageState extends State<MainPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: _buildPages(),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: navIndex,
-        onTap: (index) => setState(() {
-          navIndex = index;
-        }),
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            title: Text(Localization.of(context).mapPageTitle),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.view_list),
-            title: Text(Localization.of(context).bookingsPageTitle),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            title: Text(Localization.of(context).tripsPageTitle),
-          ),
-        ],
+    return WillPopScope(
+      onWillPop: () async => !await tripsNavigatorKey.currentState.maybePop(),
+      child: Scaffold(
+        body: Stack(
+          children: _buildPages(),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: navIndex,
+          onTap: (index) => setState(() {
+            navIndex = index;
+          }),
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.map),
+              title: Text(Localization.of(context).mapPageTitle),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.view_list),
+              title: Text(Localization.of(context).bookingsPageTitle),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.history),
+              title: Text(Localization.of(context).tripsPageTitle),
+            ),
+          ],
+        ),
       ),
     );
   }

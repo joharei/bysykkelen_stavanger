@@ -1,5 +1,5 @@
 import 'package:bysykkelen_stavanger/features/bookings_list/booking.dart';
-import 'package:bysykkelen_stavanger/features/trips/Trip.dart';
+import 'package:bysykkelen_stavanger/features/trips/trip.dart';
 import 'package:bysykkelen_stavanger/models/models.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';

@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:bysykkelen_stavanger/features/trips/Trip.dart';
+import 'package:bysykkelen_stavanger/features/trips/trip.dart';
 import 'package:bysykkelen_stavanger/features/trips/bloc/event.dart';
 import 'package:bysykkelen_stavanger/features/trips/bloc/state.dart';
 import 'package:bysykkelen_stavanger/repositories/repositories.dart';

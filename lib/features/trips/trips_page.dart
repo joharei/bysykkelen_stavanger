@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:bysykkelen_stavanger/features/trips/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/trips/bloc/state.dart';
+import 'package:bysykkelen_stavanger/features/trips/trips_navigator.dart';
 import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
 import 'package:flutter/cupertino.dart' show CupertinoSliverRefreshControl;
 import 'package:flutter/cupertino.dart';
@@ -27,6 +28,33 @@ class _TripsPageState extends State<TripsPage> {
   void initState() {
     super.initState();
     widget.tripsBloc.getNextListPage(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener(
+      bloc: widget.tripsBloc,
+      listener: (context, state) {
+        if (state is TripsReady) {
+          if (state.refreshing && _refreshIndicator.currentState != null) {
+            _refreshIndicator.currentState.show();
+          } else if (_refreshCompleter != null &&
+              !_refreshCompleter.isCompleted) {
+            _refreshCompleter.complete();
+          }
+        }
+      },
+      child: BlocBuilder(
+        bloc: widget.tripsBloc,
+        builder: (context, state) {
+          return Scaffold(
+            body: SafeArea(
+              child: _buildRootWidget(context, state),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   Future<void> _onRefresh(state, BuildContext context) {
@@ -57,7 +85,8 @@ class _TripsPageState extends State<TripsPage> {
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   if (index >= state.trips.length) {
-                    return Center(child: Padding(
+                    return Center(
+                        child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: CircularProgressIndicator(),
                     ));
@@ -69,6 +98,8 @@ class _TripsPageState extends State<TripsPage> {
                     subtitle: Text(trip.fromDate),
                     trailing:
                         trip.price == '0' ? null : Text('${trip.price} kr'),
+                    onTap: () => Navigator.of(context)
+                        .pushNamed(TripsRoutes.details, arguments: trip),
                   );
                 },
                 childCount: state.hasReachedEnd || state.trips.isEmpty
@@ -123,33 +154,6 @@ class _TripsPageState extends State<TripsPage> {
             ),
           ),
       ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocListener(
-      bloc: widget.tripsBloc,
-      listener: (context, state) {
-        if (state is TripsReady) {
-          if (state.refreshing && _refreshIndicator.currentState != null) {
-            _refreshIndicator.currentState.show();
-          } else if (_refreshCompleter != null &&
-              !_refreshCompleter.isCompleted) {
-            _refreshCompleter.complete();
-          }
-        }
-      },
-      child: BlocBuilder(
-        bloc: widget.tripsBloc,
-        builder: (context, state) {
-          return Scaffold(
-            body: SafeArea(
-              child: _buildRootWidget(context, state),
-            ),
-          );
-        },
-      ),
     );
   }
 }

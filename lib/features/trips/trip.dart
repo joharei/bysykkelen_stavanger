@@ -1,6 +1,7 @@
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-class Trip {
+class Trip extends Equatable {
   final String fromStation;
   final String fromDate;
   final String toStation;
@@ -15,5 +16,12 @@ class Trip {
     @required this.toDate,
     @required this.price,
     @required this.detailsUrl,
-  });
+  }) : super([
+          fromStation,
+          fromDate,
+          toStation,
+          toDate,
+          price,
+          detailsUrl,
+        ]);
 }
