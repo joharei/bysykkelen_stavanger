@@ -6,7 +6,6 @@ import 'package:bysykkelen_stavanger/models/models.dart';
 import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
 class BikeCarousel extends StatefulWidget {
   @override
@@ -82,11 +81,8 @@ class _BikeCarouselState extends State<BikeCarousel> {
                               .availableBikes(station.freeBikes)),
                           Padding(padding: EdgeInsets.only(top: 16)),
                           RaisedButton(
-                            onPressed: () => BookBikePage.show(
-                              context,
-                              Provider.of(context),
-                              station,
-                            ),
+                            onPressed: () =>
+                                BookBikePage.show(context, station),
                             child: Text(Localization.of(context).bookBike),
                           ),
                         ],

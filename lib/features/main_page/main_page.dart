@@ -4,14 +4,11 @@ import 'package:bysykkelen_stavanger/features/map/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/map/map_page.dart';
 import 'package:bysykkelen_stavanger/features/trips/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/trips/trips_navigator.dart';
-import 'package:bysykkelen_stavanger/repositories/repositories.dart';
 import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
 import 'package:flutter/material.dart';
 
 class MainPage extends StatefulWidget {
-  final BikeRepository bikeRepository;
-
-  const MainPage({Key key, @required this.bikeRepository}) : super(key: key);
+  const MainPage({Key key}) : super(key: key);
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -21,9 +18,9 @@ class _MainPageState extends State<MainPage>
     with TickerProviderStateMixin<MainPage> {
   final tripsNavigatorKey = GlobalKey<NavigatorState>();
 
-  BikeStationsBloc bikeStationsBloc;
-  BookingsBloc bookingsBloc;
-  TripsBloc tripsBloc;
+  final BikeStationsBloc bikeStationsBloc = BikeStationsBloc();
+  final BookingsBloc bookingsBloc = BookingsBloc();
+  final TripsBloc tripsBloc = TripsBloc();
 
   List<Widget> pages;
   List<AnimationController> faders;
@@ -34,9 +31,6 @@ class _MainPageState extends State<MainPage>
   @override
   void initState() {
     super.initState();
-    bikeStationsBloc = BikeStationsBloc(bikeRepository: widget.bikeRepository);
-    bookingsBloc = BookingsBloc(bikeRepository: widget.bikeRepository);
-    tripsBloc = TripsBloc(bikeRepository: widget.bikeRepository);
 
     pages = [
       MapPage(bikeStationsBloc: bikeStationsBloc),

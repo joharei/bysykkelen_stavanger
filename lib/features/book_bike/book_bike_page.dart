@@ -3,7 +3,6 @@ import 'package:bysykkelen_stavanger/features/book_bike/bloc/event.dart';
 import 'package:bysykkelen_stavanger/features/book_bike/bloc/state.dart';
 import 'package:bysykkelen_stavanger/features/book_bike/progress_button.dart';
 import 'package:bysykkelen_stavanger/models/models.dart';
-import 'package:bysykkelen_stavanger/repositories/bike_repository.dart';
 import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
 import 'package:bysykkelen_stavanger/shared/safe_area_insets.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,17 +11,15 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BookBikePage extends StatefulWidget {
-  final BikeRepository _bikeRepository;
   final Station _station;
 
-  BookBikePage(this._bikeRepository, this._station);
+  BookBikePage(this._station);
 
   @override
   State<StatefulWidget> createState() => _BookBikePageState();
 
   static Future show(
     BuildContext context,
-    BikeRepository bikeRepository,
     Station station,
   ) =>
       showModalBottomSheet(
@@ -34,19 +31,18 @@ class BookBikePage extends StatefulWidget {
           ),
         ),
         backgroundColor: Colors.white,
-        builder: (context) => BookBikePage(bikeRepository, station),
+        builder: (context) => BookBikePage(station),
         isScrollControlled: true,
       );
 }
 
 class _BookBikePageState extends State<BookBikePage> {
-  BookBikeBloc _bookBikeBloc;
+  final BookBikeBloc _bookBikeBloc = BookBikeBloc();
   DateTime _chosenDate;
 
   @override
   void initState() {
     super.initState();
-    _bookBikeBloc = BookBikeBloc(bikeRepository: widget._bikeRepository);
     _chosenDate = _getInitialDateTime();
   }
 

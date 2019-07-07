@@ -1,17 +1,17 @@
 import 'package:bloc/bloc.dart';
-import 'package:bysykkelen_stavanger/features/trips/trip.dart';
 import 'package:bysykkelen_stavanger/features/trips/bloc/event.dart';
 import 'package:bysykkelen_stavanger/features/trips/bloc/state.dart';
+import 'package:bysykkelen_stavanger/features/trips/trip.dart';
 import 'package:bysykkelen_stavanger/repositories/repositories.dart';
 import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
 import 'package:bysykkelen_stavanger/shared/login_prompt.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
+import 'package:kiwi/kiwi.dart' as kiwi;
 
 class TripsBloc extends Bloc<TripsEvent, TripsListState> {
-  final BikeRepository bikeRepository;
+  final BikeRepository _bikeRepository;
 
-  TripsBloc({@required this.bikeRepository}) : assert(bikeRepository != null);
+  TripsBloc() : _bikeRepository = kiwi.Container().resolve();
 
   void getNextListPage(BuildContext context) {
     dispatch(FetchTrips(context: context, refresh: false));
@@ -45,7 +45,7 @@ class TripsBloc extends Bloc<TripsEvent, TripsListState> {
     }
 
     var clearCookies = false;
-    if (!await bikeRepository.loggedIn()) {
+    if (!await _bikeRepository.loggedIn()) {
       final userNameAndPassword = await promptForUsernameAndPassword(context);
       if (userNameAndPassword == null) {
         yield TripsError(message: Localization.of(context).loginFailed);
@@ -54,7 +54,7 @@ class TripsBloc extends Bloc<TripsEvent, TripsListState> {
 
       clearCookies = !userNameAndPassword.saveCredentials;
 
-      await bikeRepository.login(
+      await _bikeRepository.login(
         userNameAndPassword.userName,
         userNameAndPassword.password,
       );
@@ -64,9 +64,10 @@ class TripsBloc extends Bloc<TripsEvent, TripsListState> {
       final page = !refresh && state is TripsReady
           ? (state.trips.length / 10).ceil()
           : 0;
-      final trips = await bikeRepository.fetchTrips(page);
+      final trips = await _bikeRepository.fetchTrips(page);
 
-      final List<Trip> existingTrips = !refresh && state is TripsReady ? state.trips : [];
+      final List<Trip> existingTrips =
+          !refresh && state is TripsReady ? state.trips : [];
 
       yield TripsReady(
         trips: existingTrips + trips,
@@ -84,7 +85,7 @@ class TripsBloc extends Bloc<TripsEvent, TripsListState> {
     }
 
     if (clearCookies) {
-      await bikeRepository.clearCookies();
+      await _bikeRepository.clearCookies();
     }
   }
 }

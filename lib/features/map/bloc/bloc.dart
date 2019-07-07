@@ -7,19 +7,17 @@ import 'package:bysykkelen_stavanger/features/map/bloc/state.dart';
 import 'package:bysykkelen_stavanger/features/map/png_generator.dart';
 import 'package:bysykkelen_stavanger/models/models.dart';
 import 'package:bysykkelen_stavanger/repositories/repositories.dart';
-import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:kiwi/kiwi.dart';
 import 'package:location_permissions/location_permissions.dart';
-import 'package:meta/meta.dart';
 
 class BikeStationsBloc extends Bloc<BikesEvent, BikesState> {
-  final BikeRepository bikeRepository;
+  final BikeRepository _bikeRepository;
   Timer _pollingTimer;
   Geolocator _locationService = Geolocator();
 
-  BikeStationsBloc({@required this.bikeRepository})
-      : assert(bikeRepository != null);
+  BikeStationsBloc() : _bikeRepository = Container().resolve();
 
   @override
   BikesState get initialState => BikesLoading();
@@ -105,7 +103,7 @@ class BikeStationsBloc extends Bloc<BikesEvent, BikesState> {
     }
 
     try {
-      final stations = await bikeRepository.getBikeStations();
+      final stations = await _bikeRepository.getBikeStations();
       if (state is BikesLoaded && state.userLocation != null) {
         await _sortStationsByDistanceToUser(stations, state.userLocation);
       }

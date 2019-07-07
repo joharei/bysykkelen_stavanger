@@ -3,14 +3,12 @@ import 'package:bysykkelen_stavanger/features/book_bike/bloc/event.dart';
 import 'package:bysykkelen_stavanger/features/book_bike/bloc/state.dart';
 import 'package:bysykkelen_stavanger/repositories/bike_repository.dart';
 import 'package:bysykkelen_stavanger/shared/login_prompt.dart';
-import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
+import 'package:kiwi/kiwi.dart' as kiwi;
 
 class BookBikeBloc extends Bloc<BookBikeEvent, BookBikeState> {
-  final BikeRepository bikeRepository;
+  final BikeRepository _bikeRepository;
 
-  BookBikeBloc({@required this.bikeRepository})
-      : assert(bikeRepository != null);
+  BookBikeBloc() : _bikeRepository = kiwi.Container().resolve();
 
   @override
   BookBikeState get initialState => BookingReady();
@@ -21,7 +19,7 @@ class BookBikeBloc extends Bloc<BookBikeEvent, BookBikeState> {
       yield BookingLoading();
 
       var clearCookies = false;
-      if (!await bikeRepository.loggedIn()) {
+      if (!await _bikeRepository.loggedIn()) {
         final userNameAndPassword =
             await promptForUsernameAndPassword(event.context);
         if (userNameAndPassword == null) {
@@ -31,7 +29,7 @@ class BookBikeBloc extends Bloc<BookBikeEvent, BookBikeState> {
 
         clearCookies = !userNameAndPassword.saveCredentials;
 
-        await bikeRepository.login(
+        await _bikeRepository.login(
           userNameAndPassword.userName,
           userNameAndPassword.password,
         );
@@ -39,14 +37,14 @@ class BookBikeBloc extends Bloc<BookBikeEvent, BookBikeState> {
 
       final spinAtLeastUntil = DateTime.now().add(Duration(seconds: 1));
 
-      final bookingOk = await bikeRepository.bookBike(
+      final bookingOk = await _bikeRepository.bookBike(
         event.station,
         event.bookingDateTime,
         event.minimumDateTime,
       );
 
       if (clearCookies) {
-        await bikeRepository.clearCookies();
+        await _bikeRepository.clearCookies();
       }
 
       if (!bookingOk) {

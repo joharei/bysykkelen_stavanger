@@ -5,13 +5,12 @@ import 'package:bysykkelen_stavanger/repositories/repositories.dart';
 import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
 import 'package:bysykkelen_stavanger/shared/login_prompt.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
+import 'package:kiwi/kiwi.dart' as kiwi;
 
 class BookingsBloc extends Bloc<BookingsEvent, BookingsListState> {
-  final BikeRepository bikeRepository;
+  final BikeRepository _bikeRepository;
 
-  BookingsBloc({@required this.bikeRepository})
-      : assert(bikeRepository != null);
+  BookingsBloc() : _bikeRepository = kiwi.Container().resolve();
 
   @override
   BookingsListState get initialState => BookingsReady(
@@ -24,7 +23,7 @@ class BookingsBloc extends Bloc<BookingsEvent, BookingsListState> {
     if (event is FetchBookings) {
       yield* _fetchBookings(event.context);
     } else if (event is DeleteBooking) {
-      final deletedOk = await bikeRepository.deleteBooking(event.booking);
+      final deletedOk = await _bikeRepository.deleteBooking(event.booking);
       if (currentState is BookingsReady) {
         yield (currentState as BookingsReady).copyWith(
           message: deletedOk
@@ -45,7 +44,7 @@ class BookingsBloc extends Bloc<BookingsEvent, BookingsListState> {
     }
 
     var clearCookies = false;
-    if (!await bikeRepository.loggedIn()) {
+    if (!await _bikeRepository.loggedIn()) {
       final userNameAndPassword = await promptForUsernameAndPassword(context);
       if (userNameAndPassword == null) {
         yield BookingsError(message: Localization.of(context).loginFailed);
@@ -54,16 +53,16 @@ class BookingsBloc extends Bloc<BookingsEvent, BookingsListState> {
 
       clearCookies = !userNameAndPassword.saveCredentials;
 
-      await bikeRepository.login(
+      await _bikeRepository.login(
         userNameAndPassword.userName,
         userNameAndPassword.password,
       );
     }
 
-    final bookings = await bikeRepository.fetchBookings();
+    final bookings = await _bikeRepository.fetchBookings();
 
     if (clearCookies) {
-      await bikeRepository.clearCookies();
+      await _bikeRepository.clearCookies();
     }
 
     if (bookings != null) {
