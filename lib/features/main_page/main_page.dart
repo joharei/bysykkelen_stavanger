@@ -3,7 +3,7 @@ import 'package:bysykkelen_stavanger/features/bookings_list/bookings_list_page.d
 import 'package:bysykkelen_stavanger/features/map/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/map/map_page.dart';
 import 'package:bysykkelen_stavanger/features/trips/bloc/bloc.dart';
-import 'package:bysykkelen_stavanger/features/trips/trips_page.dart';
+import 'package:bysykkelen_stavanger/features/trips/trips_navigator.dart';
 import 'package:bysykkelen_stavanger/repositories/repositories.dart';
 import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +46,7 @@ class _MainPageState extends State<MainPage>
         .map(
           (_) => AnimationController(
             vsync: this,
-            duration: Duration(milliseconds: 200),
+            duration: Duration(milliseconds: 300),
           ),
         )
         .toList();
@@ -109,14 +109,17 @@ class _MainPageState extends State<MainPage>
 
     Widget buildIgnorePointer(int pageIndex) {
       faders[pageIndex].reverse();
-      return IgnorePointer(child: widget);
+      if (faders[pageIndex].isAnimating) {
+        return IgnorePointer(child: buildTransition(pageIndex));
+      }
+      return Offstage(child: buildTransition(pageIndex));
     }
 
     return [
       for (var pageIndex = 0; pageIndex < pages.length; pageIndex++)
         if (pageIndex == navIndex)
           buildForward(pageIndex)
-        else if (faders[pageIndex].isAnimating)
+        else
           buildIgnorePointer(pageIndex)
     ];
   }
