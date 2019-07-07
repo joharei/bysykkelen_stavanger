@@ -1,7 +1,7 @@
 name: bysykkelen_stavanger
 description: Use the city bikes in Stavanger without the tears
 
-version: 1.1.0+1
+version: 1.2.0+1
 
 environment:
   sdk: ">=2.3.0-dev <3.0.0"
