@@ -32,27 +32,27 @@ class _TripsPageState extends State<TripsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener(
-      bloc: widget.tripsBloc,
-      listener: (context, state) {
-        if (state is TripsReady) {
-          if (state.refreshing && _refreshIndicator.currentState != null) {
-            _refreshIndicator.currentState.show();
-          } else if (_refreshCompleter != null &&
-              !_refreshCompleter.isCompleted) {
-            _refreshCompleter.complete();
-          }
-        }
-      },
-      child: BlocBuilder(
+    return Scaffold(
+      body: BlocListener(
         bloc: widget.tripsBloc,
-        builder: (context, state) {
-          return Scaffold(
-            body: SafeArea(
-              child: _buildRootWidget(context, state),
-            ),
-          );
+        listener: (context, state) {
+          if (state is TripsReady) {
+            if (state.refreshing && _refreshIndicator.currentState != null) {
+              _refreshIndicator.currentState.show();
+            } else if (_refreshCompleter != null &&
+                !_refreshCompleter.isCompleted) {
+              _refreshCompleter.complete();
+            }
+          } else if (state is TripsError) {
+            if (_refreshCompleter != null && _refreshCompleter.isCompleted) {
+              _refreshCompleter.complete();
+            }
+          }
         },
+        child: BlocBuilder(
+          bloc: widget.tripsBloc,
+          builder: (context, state) => _buildRootWidget(context, state),
+        ),
       ),
     );
   }

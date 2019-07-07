@@ -78,4 +78,7 @@ class LocalizationNO extends Localization {
 
   @override
   String toStation(String to) => 'Til $to';
+
+  @override
+  String price(String price) => 'Pris: $price kr';
 }

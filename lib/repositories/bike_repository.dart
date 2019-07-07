@@ -37,6 +37,9 @@ class BikeRepository {
   Future<List<Trip>> fetchTrips(int page) =>
       _bysykkelenScraper.fetchTrips(page);
 
+  Future<DetailedTrip> fetchTripDetails(Trip trip) =>
+      _bysykkelenScraper.fetchTripDetails(trip);
+
   Future<bool> deleteBooking(Booking booking) =>
       _bysykkelenScraper.deleteBooking(booking);
 

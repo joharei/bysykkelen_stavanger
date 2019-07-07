@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:bysykkelen_stavanger/features/bookings_list/booking.dart';
 import 'package:bysykkelen_stavanger/features/trips/trip.dart';
 import 'package:bysykkelen_stavanger/models/models.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:meta/meta.dart';
 
@@ -184,6 +187,45 @@ class BysykkelenScraper {
     }
   }
 
+  Future<DetailedTrip> fetchTripDetails(Trip trip) async {
+    dio.options = BaseOptions(
+      baseUrl: 'https://my.bysykkelen.no',
+      responseType: ResponseType.plain,
+      validateStatus: (status) => status == 200,
+    );
+
+    try {
+      final response = await dio.get(trip.detailsUrl);
+
+      final document = parser.parse(response.data.toString());
+      final elements = document.querySelectorAll('table td');
+      final detailedTrip = Trip(
+        fromDate: elements[0].text,
+        fromStation: elements[1].text,
+        toDate: elements[2].text,
+        toStation: elements[3].text,
+        price: elements[4].text,
+        detailsUrl: trip.detailsUrl,
+      );
+
+      final optionsJson = RegExp(r'var options = (.+);')
+          .firstMatch(response.data.toString())
+          .group(1);
+      final options = jsonDecode(optionsJson);
+      final List<LatLng> points = options['markers']
+          .map<LatLng>(
+            (marker) => LatLng(
+              double.parse(marker['lat']),
+              double.parse(marker['lng']),
+            ),
+          )
+          .toList();
+      return DetailedTrip(detailedTrip, points);
+    } on DioError catch (_) {
+      throw ScrapingException();
+    }
+  }
+
   Future<bool> deleteBooking(Booking booking) async {
     dio.options = BaseOptions(
       baseUrl: 'https://my.bysykkelen.no',
@@ -220,6 +262,13 @@ class BysykkelenScraper {
       '${dateTime.year.toString()} '
       '${dateTime.hour.toString().padLeft(2, '0')}:'
       '${dateTime.minute.toString().padLeft(2, '0')}';
+}
+
+class DetailedTrip {
+  final Trip trip;
+  final List<LatLng> points;
+
+  DetailedTrip(this.trip, this.points);
 }
 
 class ScrapingException implements Exception {}

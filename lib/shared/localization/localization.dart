@@ -56,6 +56,8 @@ abstract class Localization {
   String fromTo(String from, String to);
 
   String toStation(String to);
+
+  String price(String price);
 }
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<Localization> {
