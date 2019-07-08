@@ -82,4 +82,7 @@ class LocalizationEN extends Localization {
 
   @override
   String price(String price) => 'Price: $price kr';
+
+  @override
+  String distance(String distance) => 'Distance: $distance ';
 }

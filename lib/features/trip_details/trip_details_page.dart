@@ -51,29 +51,41 @@ class _TripDetailsPageState extends State<TripDetailsPage> {
   }
 
   Widget _buildDetailsPage(LoadedTripDetailsState state) {
+    String distance;
+    if (state.distanceInMeters >= 1000) {
+      final km = state.distanceInMeters / 1000;
+      distance =
+          km.toStringAsFixed(km.truncateToDouble() == km ? 0 : 1) + ' km';
+    } else {
+      distance = '${state.distanceInMeters} m';
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-          child: Text(
-            Localization.of(context)
-                .fromTo(state.trip.fromStation, state.trip.toStation),
-            style: Theme.of(context).textTheme.subhead,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            '${state.trip.fromDate} - ${state.trip.toDate}',
-            style: Theme.of(context).textTheme.subhead,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
-          child: Text(
-            Localization.of(context).price(state.trip.price),
-            style: Theme.of(context).textTheme.subhead,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                Localization.of(context)
+                    .fromTo(state.trip.fromStation, state.trip.toStation),
+                style: Theme.of(context).textTheme.subhead,
+              ),
+              Text(
+                '${state.trip.fromDate} - ${state.trip.toDate}',
+                style: Theme.of(context).textTheme.subhead,
+              ),
+              Text(
+                Localization.of(context).distance(distance),
+                style: Theme.of(context).textTheme.subhead,
+              ),
+              Text(
+                Localization.of(context).price(state.trip.price),
+                style: Theme.of(context).textTheme.subhead,
+              ),
+            ],
           ),
         ),
         Divider(height: 1),

@@ -81,4 +81,7 @@ class LocalizationNO extends Localization {
 
   @override
   String price(String price) => 'Pris: $price kr';
+
+  @override
+  String distance(String distance) => 'Lengde: $distance ';
 }

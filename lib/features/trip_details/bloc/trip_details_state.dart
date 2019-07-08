@@ -17,7 +17,12 @@ class InitialTripDetailsState extends TripDetailsState {
 class LoadedTripDetailsState extends TripDetailsState {
   final List<LatLng> points;
   final LatLngBounds bounds;
+  final int distanceInMeters;
 
-  LoadedTripDetailsState(Trip trip, this.points, this.bounds)
-      : super(trip, [points, bounds]);
+  LoadedTripDetailsState(
+    Trip trip,
+    this.points,
+    this.bounds,
+    this.distanceInMeters,
+  ) : super(trip, [points, bounds, distanceInMeters]);
 }

@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/trip_details/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/trips/trip.dart';
 import 'package:bysykkelen_stavanger/repositories/bike_repository.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:kiwi/kiwi.dart';
 
@@ -38,6 +39,22 @@ class TripDetailsBloc extends Bloc<TripDetailsEvent, TripDetailsState> {
         ),
       );
 
+      var pairs = <List<LatLng>>[];
+      for (var i = 0; i < details.points.length - 1; i += 1) {
+        pairs.add(details.points.sublist(i, i + 2));
+      }
+      final distances = await Future.wait(
+        pairs.map(
+          (pair) => Geolocator().distanceBetween(
+            pair[0].latitude,
+            pair[0].longitude,
+            pair[1].latitude,
+            pair[1].longitude,
+          ),
+        ),
+      );
+      final distance = distances.reduce((d1, d2) => d1 + d2).round();
+
       yield LoadedTripDetailsState(
         details.trip,
         details.points,
@@ -45,6 +62,7 @@ class TripDetailsBloc extends Bloc<TripDetailsEvent, TripDetailsState> {
           northeast: northeast,
           southwest: southwest,
         ),
+        distance,
       );
     }
   }
