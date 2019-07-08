@@ -96,8 +96,8 @@ class _TripDetailsPageState extends State<TripDetailsPage> {
               )
             },
             onMapCreated: (controller) {
-              controller
-                  .moveCamera(CameraUpdate.newLatLngBounds(state.bounds, 16));
+              WidgetsBinding.instance.addPostFrameCallback((_) => controller
+                  .moveCamera(CameraUpdate.newLatLngBounds(state.bounds, 16)));
             },
           ),
         ),
