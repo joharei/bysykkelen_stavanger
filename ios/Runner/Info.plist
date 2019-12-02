@@ -10,7 +10,7 @@
 		<string>nb</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Bysykkelen</string>
 	<key>CFBundleExecutable</key>
