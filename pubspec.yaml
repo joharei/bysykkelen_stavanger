@@ -19,7 +19,7 @@ dependencies:
   path_provider: ^1.4.5
   html: ^0.14.0+3
   flutter_bloc: ^0.15.0
-  equatable: ^0.2.5
+  equatable: ^1.0.1
   google_maps_flutter: ^0.5.19
   firebase_crashlytics: ^0.0.4+8
   url_launcher: ^5.0.3

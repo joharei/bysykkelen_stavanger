@@ -3,13 +3,17 @@ import 'package:equatable/equatable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
 
-abstract class BikesState extends Equatable {
-  BikesState([List props = const []]) : super(props);
+abstract class BikesState extends Equatable {}
+
+class BikesLoading extends BikesState {
+  @override
+  List<Object> get props => [];
 }
 
-class BikesLoading extends BikesState {}
-
-class BikesError extends BikesState {}
+class BikesError extends BikesState {
+  @override
+  List<Object> get props => [];
+}
 
 class BikesLoaded extends BikesState {
   final List<Station> stations;
@@ -33,17 +37,7 @@ class BikesLoaded extends BikesState {
     this.cameraPosition,
   })  : assert(stations != null),
         assert(idToStation != null),
-        assert(markers != null),
-        super([
-          stations,
-          idToStation,
-          markers,
-          selectedMarkerId,
-          userLocation,
-          zoomToLocation,
-          hasPermission,
-          cameraPosition,
-        ]);
+        assert(markers != null);
 
   BikesLoaded copyWith({
     List<Station> stations,
@@ -66,4 +60,16 @@ class BikesLoaded extends BikesState {
         zoomToLocation: zoomToLocation ?? false,
         cameraPosition: cameraPosition,
       );
+
+  @override
+  List<Object> get props => [
+        stations,
+        idToStation,
+        markers,
+        selectedMarkerId,
+        userLocation,
+        zoomToLocation,
+        hasPermission,
+        cameraPosition,
+      ];
 }

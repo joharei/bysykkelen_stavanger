@@ -7,7 +7,10 @@ import 'package:meta/meta.dart';
 abstract class TripDetailsState extends Equatable {
   final Trip trip;
 
-  TripDetailsState(this.trip, [List props = const []]) : super(props + [trip]);
+  TripDetailsState(this.trip);
+
+  @override
+  List<Object> get props => [trip];
 }
 
 class InitialTripDetailsState extends TripDetailsState {
@@ -24,5 +27,13 @@ class LoadedTripDetailsState extends TripDetailsState {
     this.points,
     this.bounds,
     this.distanceInMeters,
-  ) : super(trip, [points, bounds, distanceInMeters]);
+  ) : super(trip);
+
+  @override
+  List<Object> get props => super.props
+    ..addAll([
+      points,
+      bounds,
+      distanceInMeters,
+    ]);
 }

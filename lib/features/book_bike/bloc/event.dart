@@ -3,9 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
-abstract class BookBikeEvent extends Equatable {
-  BookBikeEvent([List props = const []]) : super(props);
-}
+abstract class BookBikeEvent extends Equatable {}
 
 class BookBike extends BookBikeEvent {
   final Station station;
@@ -21,11 +19,13 @@ class BookBike extends BookBikeEvent {
   })  : assert(station != null),
         assert(bookingDateTime != null),
         assert(minimumDateTime != null),
-        assert(context != null),
-        super([
-          station,
-          bookingDateTime,
-          minimumDateTime,
-          context,
-        ]);
+        assert(context != null);
+
+  @override
+  List<Object> get props => [
+        station,
+        bookingDateTime,
+        minimumDateTime,
+        context,
+      ];
 }

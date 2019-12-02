@@ -4,17 +4,17 @@ import 'package:meta/meta.dart';
 
 import '../booking.dart';
 
-abstract class BookingsEvent extends Equatable {
-  BookingsEvent([List props = const []]) : super(props);
-}
+abstract class BookingsEvent extends Equatable {}
 
 class FetchBookings extends BookingsEvent {
   final BuildContext context;
 
   FetchBookings({
     @required this.context,
-  })  : assert(context != null),
-        super([context]);
+  }) : assert(context != null);
+
+  @override
+  List<Object> get props => [context];
 }
 
 class DeleteBooking extends BookingsEvent {
@@ -25,6 +25,8 @@ class DeleteBooking extends BookingsEvent {
     @required this.context,
     @required this.booking,
   })  : assert(context != null),
-        assert(booking != null),
-        super([context, booking]);
+        assert(booking != null);
+
+  @override
+  List<Object> get props => [context, booking];
 }

@@ -2,9 +2,7 @@ import 'package:bysykkelen_stavanger/features/bookings_list/booking.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-abstract class BookingsListState extends Equatable {
-  BookingsListState([List props = const []]) : super(props);
-}
+abstract class BookingsListState extends Equatable {}
 
 class BookingsReady extends BookingsListState {
   final List<Booking> bookings;
@@ -16,8 +14,7 @@ class BookingsReady extends BookingsListState {
     @required this.refreshing,
     this.message,
   })  : assert(bookings != null),
-        assert(refreshing != null),
-        super([bookings, refreshing, message]);
+        assert(refreshing != null);
 
   BookingsReady copyWith({
     List<Booking> bookings,
@@ -29,6 +26,9 @@ class BookingsReady extends BookingsListState {
         refreshing: refreshing ?? this.refreshing,
         message: message,
       );
+
+  @override
+  List<Object> get props => [bookings, refreshing, message];
 }
 
 class BookingsError extends BookingsListState {
@@ -36,6 +36,8 @@ class BookingsError extends BookingsListState {
 
   BookingsError({
     @required this.message,
-  })  : assert(message != null),
-        super([message]);
+  }) : assert(message != null);
+
+  @override
+  List<Object> get props => [message];
 }

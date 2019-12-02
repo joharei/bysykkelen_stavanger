@@ -2,9 +2,7 @@ import 'package:bysykkelen_stavanger/features/trips/trip.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-abstract class TripsListState extends Equatable {
-  TripsListState([List props = const []]) : super(props);
-}
+abstract class TripsListState extends Equatable {}
 
 class TripsReady extends TripsListState {
   final List<Trip> trips;
@@ -17,8 +15,7 @@ class TripsReady extends TripsListState {
     @required this.refreshing,
   })  : assert(trips != null),
         assert(hasReachedEnd != null),
-        assert(refreshing != null),
-        super([trips, hasReachedEnd, refreshing]);
+        assert(refreshing != null);
 
   TripsReady copyWith({
     List<Trip> trips,
@@ -30,6 +27,9 @@ class TripsReady extends TripsListState {
         hasReachedEnd: hasReachedEnd ?? this.hasReachedEnd,
         refreshing: refreshing ?? this.refreshing,
       );
+
+  @override
+  List<Object> get props => [trips, hasReachedEnd, refreshing];
 }
 
 class TripsError extends TripsListState {
@@ -37,6 +37,8 @@ class TripsError extends TripsListState {
 
   TripsError({
     @required this.message,
-  })  : assert(message != null),
-        super([message]);
+  }) : assert(message != null);
+
+  @override
+  List<Object> get props => [message];
 }

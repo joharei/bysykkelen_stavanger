@@ -18,12 +18,14 @@ class Booking extends Equatable {
         assert(time != null),
         assert(id != null),
         assert(requestVerificationToken != null),
-        assert(deleteUrl != null),
-        super([
-          stationName,
-          time,
-          id,
-          requestVerificationToken,
-          deleteUrl,
-        ]);
+        assert(deleteUrl != null);
+
+  @override
+  List<Object> get props => [
+        stationName,
+        time,
+        id,
+        requestVerificationToken,
+        deleteUrl,
+      ];
 }

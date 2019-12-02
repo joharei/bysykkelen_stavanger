@@ -8,8 +8,7 @@ class Station extends Equatable {
   final double lon;
   final int freeBikes;
 
-  Station(this.id, this.uid, this.name, this.lat, this.lon, this.freeBikes)
-      : super([id, uid, name, lat, lon, freeBikes]);
+  Station(this.id, this.uid, this.name, this.lat, this.lon, this.freeBikes);
 
   factory Station.fromJson(Map<String, dynamic> json) => Station(
         json['id'],
@@ -19,4 +18,7 @@ class Station extends Equatable {
         json['longitude'],
         json['free_bikes'],
       );
+
+  @override
+  List<Object> get props => [id, uid, name, lat, lon, freeBikes];
 }

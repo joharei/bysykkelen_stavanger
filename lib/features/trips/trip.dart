@@ -16,12 +16,15 @@ class Trip extends Equatable {
     @required this.toDate,
     @required this.price,
     @required this.detailsUrl,
-  }) : super([
-          fromStation,
-          fromDate,
-          toStation,
-          toDate,
-          price,
-          detailsUrl,
-        ]);
+  });
+
+  @override
+  List<Object> get props => [
+        fromStation,
+        fromDate,
+        toStation,
+        toDate,
+        price,
+        detailsUrl,
+      ];
 }
