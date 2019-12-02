@@ -16,8 +16,8 @@ dependencies:
 
   dio: ^3.0.7
   dio_cookie_manager: ^1.0.0
-  path_provider: ^1.1.0
-  html: ^0.14.0+2
+  path_provider: ^1.4.5
+  html: ^0.14.0+3
   flutter_bloc: ^0.15.0
   equatable: ^0.2.5
   google_maps_flutter: ^0.5.19
