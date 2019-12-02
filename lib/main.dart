@@ -17,6 +17,8 @@ class SimpleBlocDelegate extends BlocDelegate {
 }
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   // Pass all uncaught errors to Crashlytics.
   FlutterError.onError = (FlutterErrorDetails details) {
     Crashlytics.instance.onError(details);

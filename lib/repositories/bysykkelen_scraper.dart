@@ -5,6 +5,7 @@ import 'package:bysykkelen_stavanger/features/trips/trip.dart';
 import 'package:bysykkelen_stavanger/models/models.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:meta/meta.dart';
@@ -46,7 +47,7 @@ class BysykkelenScraper {
 
       await dio.post(
         '$_baseUrl/account/signin',
-        data: FormData.from({
+        data: FormData.fromMap({
           'UserName': userName,
           'Password': password,
           '__RequestVerificationToken': loginFormToken,
@@ -86,7 +87,7 @@ class BysykkelenScraper {
 
       await dio.post(
         '$_baseUrl/reservations/add?dsId=${station.uid}&isNotEmpty=$isNotEmpty',
-        data: FormData.from({
+        data: FormData.fromMap({
           'StartDate': _formatDateTime(bookingDateTime),
           'MinDate': _formatDateTime(minimumDateTime),
           'DockingStationId': '${station.uid}',
@@ -236,7 +237,7 @@ class BysykkelenScraper {
     try {
       await dio.post(
         booking.deleteUrl,
-        data: FormData.from({
+        data: FormData.fromMap({
           '__RequestVerificationToken': booking.requestVerificationToken,
           'id': booking.id,
           'returnUrl': '',

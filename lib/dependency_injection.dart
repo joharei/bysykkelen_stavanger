@@ -5,6 +5,7 @@ import 'package:bysykkelen_stavanger/repositories/bysykkelen_scraper.dart';
 import 'package:bysykkelen_stavanger/repositories/citibikes_api_client.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:kiwi/kiwi.dart';
 import 'package:path_provider/path_provider.dart';
 
