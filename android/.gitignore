@@ -1,0 +1,13 @@
+gradle-wrapper.jar
+/.gradle
+/captures/
+/gradlew
+/gradlew.bat
+/local.properties
+GeneratedPluginRegistrant.java
+
+# Project specific rules
+app/src/main/res/values/api_keys.xml
+key.jks
+key.properties
+app/google-services.json

@@ -1,8 +1,5 @@
-<!--suppress AndroidDomInspection -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="no.johanreitan.bysykkelen_stavanger"
-    tools:ignore="MissingVersion">
+    package="no.johanreitan.bysykkelen_stavanger">
 
     <uses-feature android:name="android.hardware.location" android:required="false" />
     <uses-permission-sdk-23 android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -16,8 +13,7 @@
         android:name="io.flutter.app.FlutterApplication"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:label="Bysykkelen Stavanger"
-        tools:ignore="GoogleAppIndexingWarning">
+        android:label="Bysykkelen Stavanger">
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -25,10 +21,10 @@
 
         <activity
             android:name=".MainActivity"
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-            android:hardwareAccelerated="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
             <!-- This keeps the window background of the activity showing
                  until Flutter renders its first frame. It can be removed if
