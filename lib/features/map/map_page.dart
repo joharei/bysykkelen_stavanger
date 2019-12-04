@@ -12,9 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapPage extends StatefulWidget {
-  final BikeStationsBloc bikeStationsBloc;
-
-  const MapPage({Key key, @required this.bikeStationsBloc}) : super(key: key);
+  const MapPage({Key key}) : super(key: key);
 
   @override
   _MapPageState createState() => _MapPageState();
@@ -23,33 +21,33 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   Completer<GoogleMapController> mapController = Completer();
   CameraPosition cameraPosition = initialPosition;
+  bool cameraPositionRestored = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    final currentState = widget.bikeStationsBloc.state;
-    if (currentState is BikesLoaded && currentState.cameraPosition != null) {
-      cameraPosition = currentState.cameraPosition;
-    }
-    widget.bikeStationsBloc.add(StartPollingStations(
-      initialState: currentState is BikesLoading,
+    // ignore: close_sinks
+    final bikeStationsBloc = BlocProvider.of<BikeStationsBloc>(context);
+    bikeStationsBloc.add(StartPollingStations(
+      initialState: bikeStationsBloc.state is BikesLoading,
     ));
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    widget.bikeStationsBloc.add(PageOnDispose(cameraPosition: cameraPosition));
+    BlocProvider.of<BikeStationsBloc>(context)
+        .add(PageOnDispose(cameraPosition: cameraPosition));
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
-      widget.bikeStationsBloc.add(StopPollingStations());
+      BlocProvider.of<BikeStationsBloc>(context).add(StopPollingStations());
     } else if (state == AppLifecycleState.resumed) {
-      widget.bikeStationsBloc.add(StartPollingStations());
+      BlocProvider.of<BikeStationsBloc>(context).add(StartPollingStations());
     }
   }
 
@@ -63,19 +61,33 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener(
-      bloc: widget.bikeStationsBloc,
-      listener: (context, state) async {
-        if (state is BikesLoaded &&
-            state.userLocation != null &&
-            state.zoomToLocation) {
-          final controller = await mapController.future;
-          controller.animateCamera(
-              CameraUpdate.newLatLngZoom(state.userLocation, 14));
-        }
-      },
-      child: BlocBuilder(
-        bloc: widget.bikeStationsBloc,
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<BikeStationsBloc, BikesState>(
+          listener: (context, state) async {
+            if (state is BikesLoaded &&
+                state.userLocation != null &&
+                state.zoomToLocation) {
+              final controller = await mapController.future;
+              controller.animateCamera(
+                  CameraUpdate.newLatLngZoom(state.userLocation, 14));
+            }
+          },
+        ),
+        BlocListener<BikeStationsBloc, BikesState>(
+          condition: (prevState, state) =>
+              !cameraPositionRestored &&
+              state is BikesLoaded &&
+              state.cameraPosition != null,
+          listener: (context, state) {
+            setState(() {
+              cameraPosition = (state as BikesLoaded).cameraPosition;
+              cameraPositionRestored = true;
+            });
+          },
+        )
+      ],
+      child: BlocBuilder<BikeStationsBloc, BikesState>(
         builder: (context, BikesState state) {
           return Stack(
             children: [
@@ -99,10 +111,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
               Container(
                 alignment: Alignment.bottomCenter,
                 margin: EdgeInsets.only(bottom: safeAreaBottomInset(context)),
-                child: BlocProvider.value(
-                  value: widget.bikeStationsBloc,
-                  child: BikeCarousel(),
-                ),
+                child: BikeCarousel(),
               ),
             ],
           );

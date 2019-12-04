@@ -36,6 +36,10 @@ class BikeStationsBloc extends Bloc<BikesEvent, BikesState> {
 
     if (event is StartPollingStations) {
       _mapStartPollingToState(event);
+    } else if (event is StopPollingStations) {
+      if (_pollingTimer != null) {
+        _pollingTimer.cancel();
+      }
     } else if (event is FetchBikeStations) {
       yield* _mapFetchBikeStationsToState(event);
     } else if (event is MarkerSelected && currentState is BikesLoaded) {

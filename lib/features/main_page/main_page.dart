@@ -6,6 +6,7 @@ import 'package:bysykkelen_stavanger/features/trips/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/trips/trips_navigator.dart';
 import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key key}) : super(key: key);
@@ -18,10 +19,6 @@ class _MainPageState extends State<MainPage>
     with TickerProviderStateMixin<MainPage> {
   final tripsNavigatorKey = GlobalKey<NavigatorState>();
 
-  final BikeStationsBloc bikeStationsBloc = BikeStationsBloc();
-  final BookingsBloc bookingsBloc = BookingsBloc();
-  final TripsBloc tripsBloc = TripsBloc();
-
   List<Widget> pages;
   List<AnimationController> faders;
   List<Key> pageKeys;
@@ -33,9 +30,9 @@ class _MainPageState extends State<MainPage>
     super.initState();
 
     pages = [
-      MapPage(bikeStationsBloc: bikeStationsBloc),
-      BookingsListPage(bookingsBloc: bookingsBloc),
-      TripsNavigator(navigatorKey: tripsNavigatorKey, tripsBloc: tripsBloc),
+      MapPage(),
+      BookingsListPage(),
+      TripsNavigator(navigatorKey: tripsNavigatorKey),
     ];
     faders = pages
         .map(
@@ -54,39 +51,49 @@ class _MainPageState extends State<MainPage>
     for (var controller in faders) {
       controller.dispose();
     }
-    bikeStationsBloc.close();
-    bookingsBloc.close();
-    tripsBloc.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => !await tripsNavigatorKey.currentState.maybePop(),
-      child: Scaffold(
-        body: Stack(
-          children: _buildPages(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<BikeStationsBloc>(
+          create: (context) => BikeStationsBloc(),
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: navIndex,
-          onTap: (index) => setState(() {
-            navIndex = index;
-          }),
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.map),
-              title: Text(Localization.of(context).mapPageTitle),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.view_list),
-              title: Text(Localization.of(context).bookingsPageTitle),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.history),
-              title: Text(Localization.of(context).tripsPageTitle),
-            ),
-          ],
+        BlocProvider<BookingsBloc>(
+          create: (context) => BookingsBloc(),
+        ),
+        BlocProvider<TripsBloc>(
+          create: (context) => TripsBloc(),
+        ),
+      ],
+      child: WillPopScope(
+        onWillPop: () async => !await tripsNavigatorKey.currentState.maybePop(),
+        child: Scaffold(
+          body: Stack(
+            children: _buildPages(),
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: navIndex,
+            onTap: (index) => setState(() {
+              navIndex = index;
+            }),
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.map),
+                title: Text(Localization.of(context).mapPageTitle),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.view_list),
+                title: Text(Localization.of(context).bookingsPageTitle),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.history),
+                title: Text(Localization.of(context).tripsPageTitle),
+              ),
+            ],
+          ),
         ),
       ),
     );

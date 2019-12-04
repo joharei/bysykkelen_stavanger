@@ -11,10 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'bloc/state.dart';
 
 class BookingsListPage extends StatefulWidget {
-  final BookingsBloc bookingsBloc;
-
-  const BookingsListPage({Key key, @required this.bookingsBloc})
-      : super(key: key);
+  const BookingsListPage({Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _BookingsListPageState();
@@ -27,14 +24,13 @@ class _BookingsListPageState extends State<BookingsListPage> {
   @override
   void initState() {
     super.initState();
-    widget.bookingsBloc.add(FetchBookings(context: context));
+    BlocProvider.of<BookingsBloc>(context).add(FetchBookings(context: context));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocListener(
-        bloc: widget.bookingsBloc,
+      body: BlocListener<BookingsBloc, BookingsListState>(
         listener: (context, state) {
           if (state is BookingsReady) {
             if (state.message != null) {
@@ -50,8 +46,7 @@ class _BookingsListPageState extends State<BookingsListPage> {
             }
           }
         },
-        child: BlocBuilder(
-          bloc: widget.bookingsBloc,
+        child: BlocBuilder<BookingsBloc, BookingsListState>(
           builder: (context, state) {
             return SafeArea(
               child: Stack(
@@ -93,7 +88,8 @@ class _BookingsListPageState extends State<BookingsListPage> {
 
   Future<void> _onRefresh(state, BuildContext context) {
     if (state is BookingsReady && !state.refreshing) {
-      widget.bookingsBloc.add(FetchBookings(context: context));
+      BlocProvider.of<BookingsBloc>(context)
+          .add(FetchBookings(context: context));
     }
     _refreshCompleter = Completer();
     return _refreshCompleter.future;
@@ -124,7 +120,7 @@ class _BookingsListPageState extends State<BookingsListPage> {
                     icon: Icon(Icons.delete, color: Colors.red),
                     onPressed: () {
                       return {
-                        widget.bookingsBloc.add(
+                        BlocProvider.of<BookingsBloc>(context).add(
                           DeleteBooking(
                             context: context,
                             booking: booking,

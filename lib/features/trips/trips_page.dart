@@ -11,9 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TripsPage extends StatefulWidget {
-  final TripsBloc tripsBloc;
-
-  const TripsPage({Key key, @required this.tripsBloc}) : super(key: key);
+  const TripsPage({Key key}) : super(key: key);
 
   @override
   _TripsPageState createState() => _TripsPageState();
@@ -27,14 +25,13 @@ class _TripsPageState extends State<TripsPage> {
   @override
   void initState() {
     super.initState();
-    widget.tripsBloc.getNextListPage(context);
+    BlocProvider.of<TripsBloc>(context).getNextListPage(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocListener(
-        bloc: widget.tripsBloc,
+      body: BlocListener<TripsBloc, TripsListState>(
         listener: (context, state) {
           if (state is TripsReady) {
             if (state.refreshing && _refreshIndicator.currentState != null) {
@@ -49,8 +46,7 @@ class _TripsPageState extends State<TripsPage> {
             }
           }
         },
-        child: BlocBuilder(
-          bloc: widget.tripsBloc,
+        child: BlocBuilder<TripsBloc, TripsListState>(
           builder: (context, state) => _buildRootWidget(context, state),
         ),
       ),
@@ -59,7 +55,7 @@ class _TripsPageState extends State<TripsPage> {
 
   Future<void> _onRefresh(state, BuildContext context) {
     if (state is TripsReady && !state.refreshing) {
-      widget.tripsBloc.refresh(context);
+      BlocProvider.of<TripsBloc>(context).refresh(context);
     }
     _refreshCompleter = Completer();
     return _refreshCompleter.future;
@@ -121,7 +117,7 @@ class _TripsPageState extends State<TripsPage> {
             _scrollController.position.extentAfter == 0 &&
             state is TripsReady &&
             !state.hasReachedEnd) {
-          widget.tripsBloc.getNextListPage(context);
+          BlocProvider.of<TripsBloc>(context).getNextListPage(context);
         }
         return false;
       };

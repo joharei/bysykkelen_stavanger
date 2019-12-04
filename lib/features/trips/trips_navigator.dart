@@ -11,9 +11,9 @@ class TripsNavigator extends StatelessWidget {
   final GlobalKey<NavigatorState> navigatorKey;
   final Map<String, Function(Object)> _routes;
 
-  TripsNavigator({Key key, @required this.navigatorKey, @required tripsBloc})
+  TripsNavigator({Key key, @required this.navigatorKey})
       : _routes = {
-          TripsRoutes.root: (arguments) => TripsPage(tripsBloc: tripsBloc),
+          TripsRoutes.root: (arguments) => TripsPage(),
           TripsRoutes.details: (arguments) => TripDetailsPage(trip: arguments),
         },
         super(key: key);
