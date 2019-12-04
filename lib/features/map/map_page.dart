@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:bysykkelen_stavanger/features/main_page/bloc/bloc.dart';
+import 'package:bysykkelen_stavanger/features/main_page/bloc/state.dart';
 import 'package:bysykkelen_stavanger/features/map/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/map/bloc/event.dart';
 import 'package:bysykkelen_stavanger/features/map/bloc/state.dart';
@@ -26,19 +28,13 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    _togglePolling();
     WidgetsBinding.instance.addObserver(this);
-    // ignore: close_sinks
-    final bikeStationsBloc = BlocProvider.of<BikeStationsBloc>(context);
-    bikeStationsBloc.add(StartPollingStations(
-      initialState: bikeStationsBloc.state is BikesLoading,
-    ));
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    BlocProvider.of<BikeStationsBloc>(context)
-        .add(PageOnDispose(cameraPosition: cameraPosition));
     super.dispose();
   }
 
@@ -63,6 +59,12 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
+        BlocListener<MainBloc, MainState>(
+          condition: (prevState, state) => prevState.navIndex != state.navIndex,
+          listener: (context, state) {
+            _togglePolling();
+          },
+        ),
         BlocListener<BikeStationsBloc, BikesState>(
           listener: (context, state) async {
             if (state is BikesLoaded &&
@@ -118,5 +120,18 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
         },
       ),
     );
+  }
+
+  void _togglePolling() {
+    final mainBloc = BlocProvider.of<MainBloc>(context);
+    final bikeStationsBloc = BlocProvider.of<BikeStationsBloc>(context);
+
+    if (mainBloc.state.navIndex == 0) {
+      bikeStationsBloc.add(StartPollingStations(
+        initialState: bikeStationsBloc.state is BikesLoading,
+      ));
+    } else {
+      bikeStationsBloc.add(PageOnDispose(cameraPosition: cameraPosition));
+    }
   }
 }

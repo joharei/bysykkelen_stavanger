@@ -1,11 +1,13 @@
 import 'package:bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/dependency_injection.dart';
+import 'package:bysykkelen_stavanger/features/main_page/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/main_page/main_page.dart';
 import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
 import 'package:bysykkelen_stavanger/theme.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 class SimpleBlocDelegate extends BlocDelegate {
@@ -47,7 +49,10 @@ class App extends StatelessWidget {
         const Locale('en', ''),
         const Locale('nb', ''),
       ],
-      home: MainPage(),
+      home: BlocProvider(
+        create: (context) => MainBloc(),
+        child: MainPage(),
+      ),
     );
   }
 }
