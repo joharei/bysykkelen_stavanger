@@ -23,7 +23,7 @@ dependencies:
   google_maps_flutter: ^0.5.21+12
   firebase_crashlytics: ^0.1.1+2
   url_launcher: ^5.2.7
-  geolocator: ^5.0.1
+  geolocator: ^5.1.5
   kiwi: ^0.2.0
 
 dev_dependencies:
