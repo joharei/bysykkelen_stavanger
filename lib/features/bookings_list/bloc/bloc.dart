@@ -24,8 +24,8 @@ class BookingsBloc extends Bloc<BookingsEvent, BookingsListState> {
       yield* _fetchBookings(event.context);
     } else if (event is DeleteBooking) {
       final deletedOk = await _bikeRepository.deleteBooking(event.booking);
-      if (currentState is BookingsReady) {
-        yield (currentState as BookingsReady).copyWith(
+      if (state is BookingsReady) {
+        yield (state as BookingsReady).copyWith(
           message: deletedOk
               ? Localization.of(event.context)
                   .deletedBooking(event.booking.stationName)
@@ -39,8 +39,8 @@ class BookingsBloc extends Bloc<BookingsEvent, BookingsListState> {
   }
 
   Stream<BookingsListState> _fetchBookings(BuildContext context) async* {
-    if (currentState is BookingsReady) {
-      yield (currentState as BookingsReady).copyWith(refreshing: true);
+    if (state is BookingsReady) {
+      yield (state as BookingsReady).copyWith(refreshing: true);
     }
 
     var clearCookies = false;

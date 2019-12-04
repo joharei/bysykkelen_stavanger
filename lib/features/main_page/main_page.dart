@@ -54,9 +54,9 @@ class _MainPageState extends State<MainPage>
     for (var controller in faders) {
       controller.dispose();
     }
-    bikeStationsBloc.dispose();
-    bookingsBloc.dispose();
-    tripsBloc.dispose();
+    bikeStationsBloc.close();
+    bookingsBloc.close();
+    tripsBloc.close();
     super.dispose();
   }
 

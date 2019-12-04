@@ -16,7 +16,7 @@ class TripDetailsBloc extends Bloc<TripDetailsEvent, TripDetailsState> {
   TripDetailsBloc(this._trip) : _bikeRepository = Container().resolve();
 
   void fetchTripDetails() {
-    dispatch(FetchTripDetails());
+    add(FetchTripDetails());
   }
 
   @override

@@ -54,7 +54,7 @@ class _BikeCarouselState extends State<BikeCarousel> {
               onPageChanged: (page) {
                 if (!_animatingToPage) {
                   BlocProvider.of<BikeStationsBloc>(context)
-                      .dispatch(MarkerSelected(stationId: stations[page].id));
+                      .add(MarkerSelected(stationId: stations[page].id));
                 }
               },
               itemBuilder: (context, index) {

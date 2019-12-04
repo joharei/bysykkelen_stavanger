@@ -28,7 +28,7 @@ packages:
       name: bloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.14.4"
+    version: "2.0.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -124,7 +124,7 @@ packages:
       name: flutter_bloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.15.1"
+    version: "2.1.1"
   flutter_localizations:
     dependency: "direct main"
     description: flutter
@@ -247,6 +247,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.1"
+  provider:
+    dependency: transitive
+    description:
+      name: provider
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.2.0"
   quiver:
     dependency: transitive
     description:

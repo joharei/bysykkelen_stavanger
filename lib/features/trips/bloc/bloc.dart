@@ -14,11 +14,11 @@ class TripsBloc extends Bloc<TripsEvent, TripsListState> {
   TripsBloc() : _bikeRepository = kiwi.Container().resolve();
 
   void getNextListPage(BuildContext context) {
-    dispatch(FetchTrips(context: context, refresh: false));
+    add(FetchTrips(context: context, refresh: false));
   }
 
   void refresh(BuildContext context) {
-    dispatch(FetchTrips(context: context, refresh: true));
+    add(FetchTrips(context: context, refresh: true));
   }
 
   @override
@@ -39,9 +39,9 @@ class TripsBloc extends Bloc<TripsEvent, TripsListState> {
     BuildContext context,
     bool refresh,
   ) async* {
-    final state = currentState;
-    if (state is TripsReady && state.trips.isEmpty) {
-      yield (currentState as TripsReady).copyWith(refreshing: true);
+    final currentState = state;
+    if (currentState is TripsReady && currentState.trips.isEmpty) {
+      yield currentState.copyWith(refreshing: true);
     }
 
     var clearCookies = false;
@@ -61,13 +61,13 @@ class TripsBloc extends Bloc<TripsEvent, TripsListState> {
     }
 
     try {
-      final page = !refresh && state is TripsReady
-          ? (state.trips.length / 10).ceil()
+      final page = !refresh && currentState is TripsReady
+          ? (currentState.trips.length / 10).ceil()
           : 0;
       final trips = await _bikeRepository.fetchTrips(page);
 
       final List<Trip> existingTrips =
-          !refresh && state is TripsReady ? state.trips : [];
+          !refresh && currentState is TripsReady ? currentState.trips : [];
 
       yield TripsReady(
         trips: existingTrips + trips,
@@ -75,8 +75,8 @@ class TripsBloc extends Bloc<TripsEvent, TripsListState> {
         hasReachedEnd: false,
       );
     } on NoNextPageException catch (_) {
-      if (state is TripsReady) {
-        yield state.copyWith(hasReachedEnd: true, refreshing: false);
+      if (currentState is TripsReady) {
+        yield currentState.copyWith(hasReachedEnd: true, refreshing: false);
       } else {
         yield TripsError(message: Localization.of(context).tripsFailed);
       }

@@ -28,11 +28,11 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    final currentState = widget.bikeStationsBloc.currentState;
+    final currentState = widget.bikeStationsBloc.state;
     if (currentState is BikesLoaded && currentState.cameraPosition != null) {
       cameraPosition = currentState.cameraPosition;
     }
-    widget.bikeStationsBloc.dispatch(StartPollingStations(
+    widget.bikeStationsBloc.add(StartPollingStations(
       initialState: currentState is BikesLoading,
     ));
   }
@@ -40,17 +40,16 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    widget.bikeStationsBloc
-        .dispatch(PageOnDispose(cameraPosition: cameraPosition));
+    widget.bikeStationsBloc.add(PageOnDispose(cameraPosition: cameraPosition));
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
-      widget.bikeStationsBloc.dispatch(StopPollingStations());
+      widget.bikeStationsBloc.add(StopPollingStations());
     } else if (state == AppLifecycleState.resumed) {
-      widget.bikeStationsBloc.dispatch(StartPollingStations());
+      widget.bikeStationsBloc.add(StartPollingStations());
     }
   }
 
@@ -100,8 +99,8 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
               Container(
                 alignment: Alignment.bottomCenter,
                 margin: EdgeInsets.only(bottom: safeAreaBottomInset(context)),
-                child: BlocProvider(
-                  bloc: widget.bikeStationsBloc,
+                child: BlocProvider.value(
+                  value: widget.bikeStationsBloc,
                   child: BikeCarousel(),
                 ),
               ),

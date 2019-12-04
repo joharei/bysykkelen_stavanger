@@ -27,7 +27,7 @@ class _BookingsListPageState extends State<BookingsListPage> {
   @override
   void initState() {
     super.initState();
-    widget.bookingsBloc.dispatch(FetchBookings(context: context));
+    widget.bookingsBloc.add(FetchBookings(context: context));
   }
 
   @override
@@ -93,7 +93,7 @@ class _BookingsListPageState extends State<BookingsListPage> {
 
   Future<void> _onRefresh(state, BuildContext context) {
     if (state is BookingsReady && !state.refreshing) {
-      widget.bookingsBloc.dispatch(FetchBookings(context: context));
+      widget.bookingsBloc.add(FetchBookings(context: context));
     }
     _refreshCompleter = Completer();
     return _refreshCompleter.future;
@@ -124,7 +124,7 @@ class _BookingsListPageState extends State<BookingsListPage> {
                     icon: Icon(Icons.delete, color: Colors.red),
                     onPressed: () {
                       return {
-                        widget.bookingsBloc.dispatch(
+                        widget.bookingsBloc.add(
                           DeleteBooking(
                             context: context,
                             booking: booking,

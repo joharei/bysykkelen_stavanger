@@ -29,7 +29,7 @@ class _TripDetailsPageState extends State<TripDetailsPage> {
 
   @override
   void dispose() {
-    _bloc.dispose();
+    _bloc.close();
     super.dispose();
   }
 

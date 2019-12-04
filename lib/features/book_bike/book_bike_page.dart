@@ -48,7 +48,7 @@ class _BookBikePageState extends State<BookBikePage> {
 
   @override
   void dispose() {
-    _bookBikeBloc.dispose();
+    _bookBikeBloc.close();
     super.dispose();
   }
 
@@ -89,7 +89,7 @@ class _BookBikePageState extends State<BookBikePage> {
       return;
     }
 
-    _bookBikeBloc.dispatch(BookBike(
+    _bookBikeBloc.add(BookBike(
       station: widget._station,
       bookingDateTime: _chosenDate,
       minimumDateTime: minimumDateTime,
