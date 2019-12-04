@@ -156,8 +156,8 @@ SPEC CHECKSUMS:
   GoogleUtilities: 547a86735c6f0ee30ad17e94df4fc21f616b71cb
   location_permissions: 67cfaff583afbb027a9f9248196f4b79c40f3cdc
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
-  path_provider: f96fff6166a8867510d2c25fdcc346327cc4b259
-  url_launcher: 0067ddb8f10d36786672aa0722a21717dba3a298
+  path_provider: fb74bd0465e96b594bb3b5088ee4a4e7bb1f2a9d
+  url_launcher: a1c0cc845906122c4784c542523d8cacbded5626
 
 PODFILE CHECKSUM: 1b66dae606f75376c5f2135a8290850eeb09ae83
 
