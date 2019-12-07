@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:bysykkelen_stavanger/features/main_page/bloc/bloc.dart';
+import 'package:bysykkelen_stavanger/features/main_page/bloc/state.dart';
 import 'package:bysykkelen_stavanger/features/trips/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/trips/bloc/state.dart';
 import 'package:bysykkelen_stavanger/features/trips/trips_navigator.dart';
@@ -23,29 +25,36 @@ class _TripsPageState extends State<TripsPage> {
   final _scrollController = ScrollController();
 
   @override
-  void initState() {
-    super.initState();
-    BlocProvider.of<TripsBloc>(context).getNextListPage(context);
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocListener<TripsBloc, TripsListState>(
-        listener: (context, state) {
-          if (state is TripsReady) {
-            if (state.refreshing && _refreshIndicator.currentState != null) {
-              _refreshIndicator.currentState.show();
-            } else if (_refreshCompleter != null &&
-                !_refreshCompleter.isCompleted) {
-              _refreshCompleter.complete();
-            }
-          } else if (state is TripsError) {
-            if (_refreshCompleter != null && _refreshCompleter.isCompleted) {
-              _refreshCompleter.complete();
-            }
-          }
-        },
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<MainBloc, MainState>(
+            condition: (prevState, state) =>
+                prevState.navIndex != state.navIndex && state.navIndex == 2,
+            listener: (context, state) {
+              BlocProvider.of<TripsBloc>(context).getNextListPage(context);
+            },
+          ),
+          BlocListener<TripsBloc, TripsListState>(
+            listener: (context, state) {
+              if (state is TripsReady) {
+                if (state.refreshing &&
+                    _refreshIndicator.currentState != null) {
+                  _refreshIndicator.currentState.show();
+                } else if (_refreshCompleter != null &&
+                    !_refreshCompleter.isCompleted) {
+                  _refreshCompleter.complete();
+                }
+              } else if (state is TripsError) {
+                if (_refreshCompleter != null &&
+                    _refreshCompleter.isCompleted) {
+                  _refreshCompleter.complete();
+                }
+              }
+            },
+          ),
+        ],
         child: BlocBuilder<TripsBloc, TripsListState>(
           builder: (context, state) => _buildRootWidget(context, state),
         ),

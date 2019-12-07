@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:bysykkelen_stavanger/features/bookings_list/bloc/bloc.dart';
 import 'package:bysykkelen_stavanger/features/bookings_list/bloc/event.dart';
+import 'package:bysykkelen_stavanger/features/main_page/bloc/bloc.dart';
+import 'package:bysykkelen_stavanger/features/main_page/bloc/state.dart';
 import 'package:bysykkelen_stavanger/shared/localization/localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,30 +24,37 @@ class _BookingsListPageState extends State<BookingsListPage> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicator = GlobalKey();
 
   @override
-  void initState() {
-    super.initState();
-    BlocProvider.of<BookingsBloc>(context).add(FetchBookings(context: context));
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocListener<BookingsBloc, BookingsListState>(
-        listener: (context, state) {
-          if (state is BookingsReady) {
-            if (state.message != null) {
-              Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text(state.message),
-              ));
-            }
-            if (state.refreshing && _refreshIndicator.currentState != null) {
-              _refreshIndicator.currentState.show();
-            } else if (_refreshCompleter != null &&
-                !_refreshCompleter.isCompleted) {
-              _refreshCompleter.complete();
-            }
-          }
-        },
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<MainBloc, MainState>(
+            condition: (prevState, state) =>
+                prevState.navIndex != state.navIndex && state.navIndex == 1,
+            listener: (context, state) {
+              BlocProvider.of<BookingsBloc>(context)
+                  .add(FetchBookings(context: context));
+            },
+          ),
+          BlocListener<BookingsBloc, BookingsListState>(
+            listener: (context, state) {
+              if (state is BookingsReady) {
+                if (state.message != null) {
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                    content: Text(state.message),
+                  ));
+                }
+                if (state.refreshing &&
+                    _refreshIndicator.currentState != null) {
+                  _refreshIndicator.currentState.show();
+                } else if (_refreshCompleter != null &&
+                    !_refreshCompleter.isCompleted) {
+                  _refreshCompleter.complete();
+                }
+              }
+            },
+          ),
+        ],
         child: BlocBuilder<BookingsBloc, BookingsListState>(
           builder: (context, state) {
             return SafeArea(
