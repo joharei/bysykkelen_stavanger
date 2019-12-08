@@ -42,6 +42,8 @@ class TripsBloc extends Bloc<TripsEvent, TripsListState> {
     final currentState = state;
     if (currentState is TripsReady && currentState.trips.isEmpty) {
       yield currentState.copyWith(refreshing: true);
+    } else if (currentState is TripsReady) {
+      yield currentState.copyWith(refreshing: refresh);
     }
 
     var clearCookies = false;
