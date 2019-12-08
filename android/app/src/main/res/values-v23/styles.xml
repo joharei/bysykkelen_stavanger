@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.V23.Bysykkelen" parent="Base.Theme.Bysykkelen">
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+    <style name="Theme.V23.Bysykkelen" parent="Theme.V21.Bysykkelen">
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">@color/ic_launcher_background</item>
     </style>
 
     <style name="LaunchTheme" parent="Theme.V23.Bysykkelen" />

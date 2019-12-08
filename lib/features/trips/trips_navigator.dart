@@ -24,6 +24,7 @@ class TripsNavigator extends StatelessWidget {
       key: navigatorKey,
       initialRoute: TripsRoutes.root,
       onGenerateRoute: (routeSettings) => MaterialPageRoute(
+        settings: routeSettings,
         builder: (context) =>
             _routes[routeSettings.name](routeSettings.arguments),
       ),

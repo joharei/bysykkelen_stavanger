@@ -34,6 +34,9 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    BlocProvider.of<BikeStationsBloc>(context).add(StopPollingStations());
+    BlocProvider.of<BikeStationsBloc>(context)
+        .add(PageOnDispose(cameraPosition: cameraPosition));
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -123,15 +126,13 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   }
 
   void _togglePolling() {
-    final mainBloc = BlocProvider.of<MainBloc>(context);
-    final bikeStationsBloc = BlocProvider.of<BikeStationsBloc>(context);
-
-    if (mainBloc.state.navIndex == 0) {
-      bikeStationsBloc.add(StartPollingStations(
-        initialState: bikeStationsBloc.state is BikesLoading,
+    if (BlocProvider.of<MainBloc>(context).state.navIndex == 0) {
+      BlocProvider.of<BikeStationsBloc>(context).add(StartPollingStations(
+        initialState:
+            BlocProvider.of<BikeStationsBloc>(context).state is BikesLoading,
       ));
     } else {
-      bikeStationsBloc.add(PageOnDispose(cameraPosition: cameraPosition));
+      BlocProvider.of<BikeStationsBloc>(context).add(StopPollingStations());
     }
   }
 }

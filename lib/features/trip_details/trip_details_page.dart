@@ -102,7 +102,7 @@ class _TripDetailsPageState extends State<TripDetailsPage> {
                 polylineId: PolylineId(state.trip.detailsUrl),
                 color: Theme.of(context).primaryColor,
                 points: state.points,
-                width: 16,
+                width: 8,
                 startCap: Cap.roundCap,
                 endCap: Cap.roundCap,
               )

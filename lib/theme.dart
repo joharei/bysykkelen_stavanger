@@ -28,7 +28,7 @@ ThemeData appTheme(BuildContext context) {
     snackBarTheme: SnackBarThemeData(behavior: SnackBarBehavior.floating),
     pageTransitionsTheme: PageTransitionsTheme(
       builders: {
-        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        ...Theme.of(context).pageTransitionsTheme.builders,
         TargetPlatform.android: OpenUpwardsPageTransitionsBuilder(),
       },
     ),

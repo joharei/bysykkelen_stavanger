@@ -57,37 +57,35 @@ class _BookingsListPageState extends State<BookingsListPage> {
         ],
         child: BlocBuilder<BookingsBloc, BookingsListState>(
           builder: (context, state) {
-            return SafeArea(
-              child: Stack(
-                children: [
-                  if (Platform.isAndroid)
-                    RefreshIndicator(
-                      key: _refreshIndicator,
-                      displacement: 60,
-                      onRefresh: () => _onRefresh(state, context),
-                      child: _buildCustomScrollView(context, state),
+            return Stack(
+              children: [
+                if (Platform.isAndroid)
+                  RefreshIndicator(
+                    key: _refreshIndicator,
+                    displacement: 60,
+                    onRefresh: () => _onRefresh(state, context),
+                    child: _buildCustomScrollView(context, state),
+                  ),
+                if (Platform.isIOS) _buildCustomScrollView(context, state),
+                if (state is BookingsError)
+                  Center(
+                    child: Text(
+                      state.message,
+                      style: Theme.of(context).textTheme.subhead,
                     ),
-                  if (Platform.isIOS) _buildCustomScrollView(context, state),
-                  if (state is BookingsError)
-                    Center(
-                      child: Text(
-                        state.message,
-                        style: Theme.of(context).textTheme.subhead,
-                      ),
+                  ),
+                if (state is BookingsReady &&
+                    !state.refreshing &&
+                    state.bookings.isEmpty)
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    alignment: Alignment.center,
+                    child: Text(
+                      Localization.of(context).noBookingsInfo,
+                      style: Theme.of(context).textTheme.subhead,
                     ),
-                  if (state is BookingsReady &&
-                      !state.refreshing &&
-                      state.bookings.isEmpty)
-                    Container(
-                      padding: EdgeInsets.all(16),
-                      alignment: Alignment.center,
-                      child: Text(
-                        Localization.of(context).noBookingsInfo,
-                        style: Theme.of(context).textTheme.subhead,
-                      ),
-                    ),
-                ],
-              ),
+                  ),
+              ],
             );
           },
         ),
